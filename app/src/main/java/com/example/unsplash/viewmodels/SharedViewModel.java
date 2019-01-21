@@ -10,11 +10,11 @@ import com.example.unsplash.repositories.MainActivityRepo;
 
 import java.util.List;
 
-public class MainActivityViewModel extends AndroidViewModel {
+public class SharedViewModel extends AndroidViewModel {
 
     private final LiveData<List<Photo>> photoListObservable;
 
-    public MainActivityViewModel(@NonNull Application application) {
+    public SharedViewModel(@NonNull Application application) {
         super(application);
         MainActivityRepo repo = new MainActivityRepo();
         photoListObservable = repo.getPhoto();
