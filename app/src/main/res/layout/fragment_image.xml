@@ -9,14 +9,14 @@
 
     <ImageView
         android:id="@+id/bigImage"
-        android:layout_width="416dp"
-        android:layout_height="414dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/photo"
         android:transitionName="@string/picture_from_unsplash"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/avatars"
-        android:contentDescription="@string/photo" />
+        tools:src="@tools:sample/avatars" />
 
     <TextView
         android:id="@+id/description"

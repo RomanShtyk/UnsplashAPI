@@ -9,11 +9,11 @@
         android:id="@+id/picture"
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:contentDescription="@string/picture_from_unsplash"
         android:scaleType="centerCrop"
-        android:transitionName="@string/picture_from_unsplash"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="-46dp" />
+        tools:layout_editor_absoluteX="-46dp"
+        android:transitionName="@string/picture_from_unsplash"
+        android:contentDescription="@string/picture_from_unsplash" />
 
 </android.support.constraint.ConstraintLayout>
