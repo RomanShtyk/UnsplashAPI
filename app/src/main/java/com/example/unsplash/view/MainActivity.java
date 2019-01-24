@@ -1,11 +1,12 @@
-package com.example.unsplash;
+package com.example.unsplash.view;
 
 import android.annotation.SuppressLint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.example.unsplash.fragments.ImageFragment;
-import com.example.unsplash.fragments.ListFragment;
+import com.example.unsplash.R;
+import com.example.unsplash.view.fragments.ImageFragment;
+import com.example.unsplash.view.fragments.ListFragment;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -33,6 +34,5 @@ public class MainActivity extends AppCompatActivity {
         imageFragment = new ImageFragment();
         listFragment = new ListFragment();
     }
-
 
 }

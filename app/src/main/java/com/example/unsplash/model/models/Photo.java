@@ -1,4 +1,4 @@
-package com.example.unsplash.models;
+package com.example.unsplash.model.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -1,4 +1,4 @@
-package com.example.unsplash.fragments;
+package com.example.unsplash.view.fragments;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +18,8 @@ import com.squareup.picasso.Picasso;
 
 public class ImageFragment extends Fragment {
     String uri;
-    String descriptionText;
+    String likes;
+    String transName;
     ImageView image;
     TextView description;
 
@@ -28,28 +29,28 @@ public class ImageFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             postponeEnterTransition();
             setSharedElementEnterTransition(TransitionInflater
-                    .from(getContext()).inflateTransition(android.R.transition.move).setDuration(1000));
+                    .from(getContext()).inflateTransition(android.R.transition.move));
         }
     }
-
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_image, container, false);
-        // TODO: 23.01.2019 розібратися з transition name
-        if (getArguments() != null){
+        if (getArguments() != null) {
             uri = getArguments().getString("URI");
-            descriptionText = getArguments().getString("DESCRIPTION");
+            likes = getArguments().getString("SMTH");
+            transName = getArguments().getString("TRANS");
         }
         description = view.findViewById(R.id.description);
-        description.setText(descriptionText);
+        description.setText(likes);
         image = view.findViewById(R.id.bigImage);
-        Picasso.get().load(uri).into(image, new Callback() {
+        image.setTransitionName(transName);
+        Picasso.get().load(uri).noFade().into(image, new Callback() {
             @Override
             public void onSuccess() {
-               startPostponedEnterTransition();
+                startPostponedEnterTransition();
             }
 
             @Override
@@ -59,4 +60,6 @@ public class ImageFragment extends Fragment {
         });
         return view;
     }
+
+
 }

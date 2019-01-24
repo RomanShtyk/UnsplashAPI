@@ -1,4 +1,4 @@
-package com.example.unsplash.unsplash;
+package com.example.unsplash.model.unsplash;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;

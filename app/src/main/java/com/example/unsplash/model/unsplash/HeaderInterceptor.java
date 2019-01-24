@@ -1,4 +1,4 @@
-package com.example.unsplash.unsplash;
+package com.example.unsplash.model.unsplash;
 import java.io.IOException;
 
 import okhttp3.Interceptor;

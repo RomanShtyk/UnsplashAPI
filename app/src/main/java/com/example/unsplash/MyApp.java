@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 
-import com.example.unsplash.models.Photo;
+import com.example.unsplash.model.models.Photo;
 
 import java.util.ArrayList;
 import java.util.List;
