@@ -60,10 +60,6 @@ public class MyPagedListAdapter extends PagedListAdapter<Photo, MyPagedListAdapt
         myPagedViewHolder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                listFragment.setSharedElementReturnTransition(TransitionInflater
-//                        .from(mContext).inflateTransition(android.R.transition.explode));
-//                imageFragment.setSharedElementReturnTransition(TransitionInflater
-//                        .from(mContext).inflateTransition(android.R.transition.explode));
                 Bundle bundle = new Bundle();
                 assert photo != null;
                 bundle.putString("URI", photo.getUrls().getRegular());
@@ -72,7 +68,6 @@ public class MyPagedListAdapter extends PagedListAdapter<Photo, MyPagedListAdapt
 
                 listFragment.setSharedElementReturnTransition(TransitionInflater
                         .from(mContext).inflateTransition(android.R.transition.move));
-
 
                 imageFragment.setArguments(bundle);
                 FragmentManager manager = ((AppCompatActivity) mContext).getSupportFragmentManager();

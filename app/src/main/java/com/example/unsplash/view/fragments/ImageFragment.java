@@ -16,6 +16,8 @@ import com.example.unsplash.R;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import static com.example.unsplash.view.MainActivity.listFragment;
+
 public class ImageFragment extends Fragment {
     String uri;
     String likes;
@@ -29,7 +31,9 @@ public class ImageFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             postponeEnterTransition();
             setSharedElementEnterTransition(TransitionInflater
-                    .from(getContext()).inflateTransition(android.R.transition.move));
+                    .from(getContext()).inflateTransition(android.R.transition.move).setDuration(100));
+            listFragment.setReenterTransition(TransitionInflater
+                    .from(getContext()).inflateTransition(android.R.transition.move).setDuration(100));
         }
     }
 
