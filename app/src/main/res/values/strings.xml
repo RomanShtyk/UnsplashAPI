@@ -3,7 +3,4 @@
     <string name="picture_from_unsplash">picture from unsplash</string>
     <string name="photo">photo</string>
     <string name="description_text">description text</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

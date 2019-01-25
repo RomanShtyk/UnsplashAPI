@@ -1,0 +1,6 @@
+<root>
+    <!--suppress DeprecatedClassUsageInspection -->
+    <item name='android.arch.paging.LivePagedListBuilder'>
+        <annotation name='java.lang.Deprecated' />
+    </item>
+</root>

@@ -89,7 +89,7 @@ public class MyPagedListAdapter extends PagedListAdapter<Photo, MyPagedListAdapt
 
         @Override
         public boolean areContentsTheSame(@NonNull Photo photo, @NonNull Photo t1) {
-            return photo.getUrls().getSmall().equals(t1.getUrls().getSmall());
+            return photo.getUrls().getRegular().equals(t1.getUrls().getRegular());
         }
     };
 }

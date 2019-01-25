@@ -1,5 +1,6 @@
 package com.example.unsplash.view.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,6 +38,7 @@ public class ImageFragment extends Fragment {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -48,7 +50,7 @@ public class ImageFragment extends Fragment {
             transName = getArguments().getString("TRANS");
         }
         description = view.findViewById(R.id.description);
-        description.setText(likes);
+        description.setText("Likes: " + likes);
         image = view.findViewById(R.id.bigImage);
         image.setTransitionName(transName);
         Picasso.get().load(uri).noFade().into(image, new Callback() {

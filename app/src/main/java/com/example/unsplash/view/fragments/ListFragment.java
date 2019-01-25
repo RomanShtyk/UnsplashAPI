@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -36,6 +35,7 @@ public class ListFragment extends Fragment {
 
         PhotoViewModel photoViewModel = ViewModelProviders.of(this).get(PhotoViewModel.class);
         mAdapter = new MyPagedListAdapter(getActivity());
+        //noinspection unchecked
         photoViewModel.photoPagedList.observe(this, new Observer<PagedList<Photo>>() {
             @Override
             public void onChanged(@Nullable PagedList<Photo> photos) {
