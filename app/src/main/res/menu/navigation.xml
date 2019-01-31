@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_search"
+        android:icon="@drawable/baseline_search_black_18dp"
+        android:title="@string/search1"/>
+
+    <item
+        android:id="@+id/navigation_collections"
+        android:icon="@drawable/baseline_dns_black_18dp"
+        android:title="@string/collections"/>
+
+    <item
+        android:id="@+id/navigation"
+        android:icon="@drawable/baseline_search_black_18dp"
+        android:title="@string/later" />
+
+</menu>

@@ -1,6 +1,7 @@
 package com.example.unsplash.model.unsplash;
 
 import com.example.unsplash.model.models.Photo;
+import com.example.unsplash.model.models.SearchResults;
 
 import java.util.List;
 
@@ -12,4 +13,7 @@ public interface UnsplashAPI {
 
     @GET("/photos")
     Call<List<Photo>> getPhotos(@Query("page") int page);
+
+    @GET("/search/photos")
+    Call<SearchResults> searchPhotos(@Query("query") String query, @Query("page") int page);
 }

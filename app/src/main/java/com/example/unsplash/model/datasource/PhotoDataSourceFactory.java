@@ -20,5 +20,4 @@ public class PhotoDataSourceFactory extends DataSource.Factory {
     public MutableLiveData<PageKeyedDataSource<Integer, Photo>> getPhotoLiveDataSource() {
         return photoLiveDataSource;
     }
-
-}
+ }

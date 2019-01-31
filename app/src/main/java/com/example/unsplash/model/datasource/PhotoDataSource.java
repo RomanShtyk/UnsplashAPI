@@ -26,7 +26,7 @@ public class PhotoDataSource extends PageKeyedDataSource<Integer, Photo> {
         unsplashAPI.getPhotos(FIRST_PAGE).enqueue(new Callback<List<Photo>>() {
             @Override
             public void onResponse(@NonNull Call<List<Photo>> call, @NonNull Response<List<Photo>> response) {
-                if(response.body() != null){
+                if (response.body() != null) {
                     callback.onResult(response.body(), null, FIRST_PAGE + 1);
                 }
             }
@@ -43,9 +43,9 @@ public class PhotoDataSource extends PageKeyedDataSource<Integer, Photo> {
         unsplashAPI.getPhotos(params.key).enqueue(new Callback<List<Photo>>() {
             @Override
             public void onResponse(@NonNull Call<List<Photo>> call, @NonNull Response<List<Photo>> response) {
-                if(response.body() != null){
+                if (response.body() != null) {
                     Integer key = (params.key > 1) ? params.key - 1 : null;
-                    callback.onResult(response.body(),key);
+                    callback.onResult(response.body(), key);
                 }
             }
 
@@ -61,7 +61,7 @@ public class PhotoDataSource extends PageKeyedDataSource<Integer, Photo> {
         unsplashAPI.getPhotos(params.key).enqueue(new Callback<List<Photo>>() {
             @Override
             public void onResponse(@NonNull Call<List<Photo>> call, @NonNull Response<List<Photo>> response) {
-                if(response.body() != null){
+                if (response.body() != null) {
                     Integer key = params.key + 1;
                     callback.onResult(response.body(), key);
                 }

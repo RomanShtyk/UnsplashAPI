@@ -3,4 +3,12 @@
     <string name="picture_from_unsplash">picture from unsplash</string>
     <string name="photo">photo</string>
     <string name="description_text">description text</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search">Search here anything you want</string>
+    <string name="todo">TODO</string>
+    <string name="search_here">Search here</string>
+    <string name="collections">Collections</string>
+    <string name="later">later</string>
+    <string name="search1">Search</string>
 </resources>

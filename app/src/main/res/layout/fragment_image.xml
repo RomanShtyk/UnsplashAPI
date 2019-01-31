@@ -28,7 +28,6 @@
         android:id="@+id/description"
         android:layout_width="0dp"
         android:layout_height="18dp"
-        android:layout_marginTop="1dp"
         android:layout_marginBottom="1dp"
         android:background="#50000000"
         android:text="@string/description_text"
