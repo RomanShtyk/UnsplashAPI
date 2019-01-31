@@ -6,14 +6,12 @@ import android.arch.paging.PagedList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import com.example.unsplash.R;
@@ -32,7 +30,6 @@ public class ListFragment extends Fragment {
     final int numberOfColumns = 2;
     PagedListOnClickListener listener;
     PhotoViewModel photoViewModel;
-    BottomNavigationView bottomNav;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,41 +48,15 @@ public class ListFragment extends Fragment {
                 mAdapter.submitList(photos);
             }
         });
-        rv.setLayoutManager(new GridLayoutManager(view.getContext(), numberOfColumns));
-        listenerInit();
-        mAdapter = new MyPagedListAdapter(getActivity(), listener);
-        rv.setAdapter(mAdapter);
         return view;
     }
 
     private void viewInit(View view) {
         rv = view.findViewById(R.id.rView);
-        bottomNav = view.findViewById(R.id.navigationView);
-        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()){
-                    case R.id.navigation_collections:
-                        CollectionFragment collectionFragment = new CollectionFragment();
-                        Objects.requireNonNull(getFragmentManager())
-                                .beginTransaction()
-                                .replace(R.id.container, collectionFragment)
-                                .addToBackStack(null)
-                                .commit();
-                        break;
-                    case R.id.navigation_search:
-                        SearchFragment searchFragment = new SearchFragment();
-                        Objects.requireNonNull(getFragmentManager())
-                                .beginTransaction()
-                                .replace(R.id.container, searchFragment)
-                                .addToBackStack(null)
-                                .commit();
-                        break;
-                }
-                return false;
-
-            }
-        });
+        rv.setLayoutManager(new GridLayoutManager(view.getContext(), numberOfColumns));
+        listenerInit();
+        mAdapter = new MyPagedListAdapter(getActivity(), listener);
+        rv.setAdapter(mAdapter);
     }
 
     private void listenerInit() {

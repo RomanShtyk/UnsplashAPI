@@ -6,14 +6,12 @@ import android.arch.paging.PagedList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -28,7 +26,6 @@ import java.util.Objects;
 
 
 public class CollectionFragment extends Fragment {
-    BottomNavigationView bottomNav;
     PhotoViewModel photoViewModel;
     RecyclerView rv;
     MyPagedListOneViewAdapter mAdapter;
@@ -65,29 +62,6 @@ public class CollectionFragment extends Fragment {
 
         mAdapter = new MyPagedListOneViewAdapter(getActivity(), listener);
         rv.setAdapter(mAdapter);
-        bottomNav = view.findViewById(R.id.navigationView);
-        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()){
-                    case R.id.navigation_collections:
-                        break;
-                    case R.id.navigation_search:
-                        SearchFragment searchFragment = new SearchFragment();
-                        Objects.requireNonNull(getFragmentManager()).beginTransaction().replace(R.id.container, searchFragment)
-                                .addToBackStack(null).commit();
-                    case R.id.navigation:
-                        ListFragment listFragment = new ListFragment();
-                        Objects.requireNonNull(getFragmentManager()).beginTransaction()
-                                .replace(R.id.container, listFragment)
-                                .addToBackStack(null)
-                                .commit();
-                        break;
-                }
-                return false;
-
-            }
-        });
     }
 
     private void listenerInit() {

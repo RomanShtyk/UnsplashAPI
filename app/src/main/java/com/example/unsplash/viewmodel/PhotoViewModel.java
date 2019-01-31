@@ -19,8 +19,6 @@ public class PhotoViewModel extends ViewModel {
 
     public PhotoViewModel() {
         PhotoDataSourceFactory photoDataSourceFactory = new PhotoDataSourceFactory();
-//        LiveData<PageKeyedDataSource<Integer, Photo>> liveDataSource =
-//                photoDataSourceFactory.getPhotoLiveDataSource();
         PagedList.Config config =
                 (new PagedList.Config.Builder())
                         .setEnablePlaceholders(false)

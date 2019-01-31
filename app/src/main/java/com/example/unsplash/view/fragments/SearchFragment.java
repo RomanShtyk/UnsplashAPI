@@ -6,7 +6,6 @@ import android.arch.paging.PagedList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.transition.TransitionInflater;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -42,7 +40,6 @@ public class SearchFragment extends Fragment {
     ImageView searchButton;
     PhotoViewModel photoViewModel;
     PagedListOnClickListener listener;
-    BottomNavigationView bottomNav;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,8 +52,6 @@ public class SearchFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         initView(view);
-        listenerInit();
-        mAdapter = new MyPagedListAdapter(getActivity(), listener);
         //noinspection unchecked
         photoViewModel.searchPagedList.observe(Objects.requireNonNull(getActivity()), new Observer<PagedList<Photo>>() {
             @Override
@@ -123,7 +118,6 @@ public class SearchFragment extends Fragment {
                         .removeObservers(Objects.requireNonNull(Objects.requireNonNull(getFragmentManager())
                                 .findFragmentById(R.id.container)));
                 photoViewModel.setQuery(searchText.getText().toString());
-//
                 photoViewModel.searchPagedList.observe(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(getFragmentManager())
                         .findFragmentById(R.id.container))), new Observer<PagedList<Photo>>() {
                     @Override
@@ -135,34 +129,8 @@ public class SearchFragment extends Fragment {
         });
         toolbar = view.findViewById(R.id.toolbar);
         ((AppCompatActivity) Objects.requireNonNull(getActivity())).setSupportActionBar(toolbar);
-        bottomNav = view.findViewById(R.id.navigationView);
-        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()){
-                    case R.id.navigation_collections:
-                        CollectionFragment collectionFragment = new CollectionFragment();
-                        Objects.requireNonNull(getFragmentManager()).beginTransaction()
-                                .replace(R.id.container, collectionFragment)
-                                .addToBackStack(null)
-                                .commit();
-                        break;
-                    case R.id.navigation_search:
-
-                        break;
-                    case R.id.navigation:
-                        ListFragment listFragment = new ListFragment();
-                        Objects.requireNonNull(getFragmentManager()).beginTransaction()
-                                .replace(R.id.container, listFragment)
-                                .addToBackStack(null)
-                                .commit();
-                        break;
-                }
-                return false;
-
-            }
-        });
-
+        listenerInit();
+        mAdapter = new MyPagedListAdapter(getActivity(), listener);
     }
 
 
