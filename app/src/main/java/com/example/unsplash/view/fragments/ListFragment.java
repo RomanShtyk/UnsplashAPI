@@ -1,6 +1,5 @@
 package com.example.unsplash.view.fragments;
 
-import android.app.ActionBar;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
@@ -18,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import com.example.unsplash.R;
+import com.example.unsplash.model.models.Collection;
 import com.example.unsplash.view.adapters.MyPagedListAdapter;
 import com.example.unsplash.model.models.Photo;
 import com.example.unsplash.view.adapters.PagedListOnClickListener;
@@ -66,11 +66,21 @@ public class ListFragment extends Fragment {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
                     case R.id.navigation_collections:
+                        CollectionFragment collectionFragment = new CollectionFragment();
+                        Objects.requireNonNull(getFragmentManager())
+                                .beginTransaction()
+                                .replace(R.id.container, collectionFragment)
+                                .addToBackStack(null)
+                                .commit();
                         break;
                     case R.id.navigation_search:
                         SearchFragment searchFragment = new SearchFragment();
-                        Objects.requireNonNull(getFragmentManager()).beginTransaction().replace(R.id.container, searchFragment)
-                                .addToBackStack(null).commit();
+                        Objects.requireNonNull(getFragmentManager())
+                                .beginTransaction()
+                                .replace(R.id.container, searchFragment)
+                                .addToBackStack(null)
+                                .commit();
+                        break;
                 }
                 return false;
 
@@ -88,8 +98,6 @@ public class ListFragment extends Fragment {
                 bundle.putString("SMTH", photo.getLikes().toString());
                 bundle.putString("TRANS", view.getTransitionName());
 
-                setSharedElementReturnTransition(TransitionInflater
-                        .from(getActivity()).inflateTransition(android.R.transition.move));
                 setReenterTransition(TransitionInflater
                         .from(getContext()).inflateTransition(android.R.transition.move).setDuration(100));
                 ImageFragment imageFragment = new ImageFragment();
@@ -97,11 +105,18 @@ public class ListFragment extends Fragment {
                 FragmentManager manager = (Objects.requireNonNull(getActivity()))
                         .getSupportFragmentManager();
                 assert manager != null;
-                manager.beginTransaction().setReorderingAllowed(true)
+                manager.beginTransaction()
+                        //.setReorderingAllowed(true)
+                        // animation works well on emulator, but not on 21api device
                         .addSharedElement(view, view.getTransitionName())
                         .replace(R.id.container, imageFragment)
                         .addToBackStack(null)
                         .commit();
+            }
+
+            @Override
+            public void onClickCollection(View view, Collection collection) {
+
             }
         };
     }

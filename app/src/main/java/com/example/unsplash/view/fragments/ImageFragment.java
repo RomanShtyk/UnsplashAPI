@@ -14,8 +14,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.unsplash.R;
+import com.example.unsplash.view.MainActivity;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
+import java.util.Objects;
 
 
 public class ImageFragment extends Fragment {

@@ -6,6 +6,7 @@ import android.arch.paging.PagedList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.transition.TransitionInflater;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -22,6 +24,7 @@ import android.widget.ImageView;
 
 
 import com.example.unsplash.R;
+import com.example.unsplash.model.models.Collection;
 import com.example.unsplash.model.models.Photo;
 import com.example.unsplash.view.adapters.MyPagedListAdapter;
 import com.example.unsplash.view.adapters.PagedListOnClickListener;
@@ -39,6 +42,7 @@ public class SearchFragment extends Fragment {
     ImageView searchButton;
     PhotoViewModel photoViewModel;
     PagedListOnClickListener listener;
+    BottomNavigationView bottomNav;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,21 +79,25 @@ public class SearchFragment extends Fragment {
                 bundle.putString("SMTH", photo.getLikes().toString());
                 bundle.putString("TRANS", view.getTransitionName());
 
-                setSharedElementReturnTransition(TransitionInflater
-                        .from(getActivity()).inflateTransition(android.R.transition.move));
                 setReenterTransition(TransitionInflater
                         .from(getContext()).inflateTransition(android.R.transition.move).setDuration(100));
+
                 ImageFragment imageFragment = new ImageFragment();
                 imageFragment.setArguments(bundle);
                 FragmentManager manager = (Objects.requireNonNull(getActivity()))
                         .getSupportFragmentManager();
                 assert manager != null;
                 manager.beginTransaction()
-                        .setReorderingAllowed(true)
+                        //.setReorderingAllowed(true)
                         .addSharedElement(view, view.getTransitionName())
                         .replace(R.id.container, imageFragment)
                         .addToBackStack(null)
                         .commit();
+            }
+
+            @Override
+            public void onClickCollection(View view, Collection collection) {
+
             }
         };
     }
@@ -127,6 +135,34 @@ public class SearchFragment extends Fragment {
         });
         toolbar = view.findViewById(R.id.toolbar);
         ((AppCompatActivity) Objects.requireNonNull(getActivity())).setSupportActionBar(toolbar);
+        bottomNav = view.findViewById(R.id.navigationView);
+        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()){
+                    case R.id.navigation_collections:
+                        CollectionFragment collectionFragment = new CollectionFragment();
+                        Objects.requireNonNull(getFragmentManager()).beginTransaction()
+                                .replace(R.id.container, collectionFragment)
+                                .addToBackStack(null)
+                                .commit();
+                        break;
+                    case R.id.navigation_search:
+
+                        break;
+                    case R.id.navigation:
+                        ListFragment listFragment = new ListFragment();
+                        Objects.requireNonNull(getFragmentManager()).beginTransaction()
+                                .replace(R.id.container, listFragment)
+                                .addToBackStack(null)
+                                .commit();
+                        break;
+                }
+                return false;
+
+            }
+        });
+
     }
 
 
