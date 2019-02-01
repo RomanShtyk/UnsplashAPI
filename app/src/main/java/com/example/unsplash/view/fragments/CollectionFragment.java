@@ -7,10 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,48 +66,16 @@ public class CollectionFragment extends Fragment {
         listener = new PagedListOnClickListener() {
             @Override
             public void onClick(View view, Photo photo) {
-                Bundle bundle = new Bundle();
-                assert photo != null;
-                bundle.putString("URI", photo.getUrls().getRegular());
-                bundle.putString("SMTH", photo.getLikes().toString());
-                bundle.putString("TRANS", view.getTransitionName());
-
-                setReenterTransition(TransitionInflater
-                        .from(getContext()).inflateTransition(android.R.transition.move).setDuration(100));
-                ImageFragment imageFragment = new ImageFragment();
-                imageFragment.setArguments(bundle);
-                FragmentManager manager = (Objects.requireNonNull(getActivity()))
-                        .getSupportFragmentManager();
-                assert manager != null;
-                manager.beginTransaction()
-                        //.setReorderingAllowed(true)
-                        // animation works well on emulator, but not on 21api device
-                        .addSharedElement(view, view.getTransitionName())
-                        .replace(R.id.container, imageFragment)
-                        .addToBackStack(null)
-                        .commit();
             }
-
             @Override
             public void onClickCollection(View view, Collection collection) {
                 Bundle bundle = new Bundle();
                 assert collection != null;
-                bundle.putString("URI", collection.getCoverPhoto().getUrls().getRegular());
-                bundle.putString("SMTH", collection.getCoverPhoto().getLikes().toString());
-                bundle.putString("TRANS", view.getTransitionName());
-
-                setReenterTransition(TransitionInflater
-                        .from(getContext()).inflateTransition(android.R.transition.move).setDuration(100));
-                ImageFragment imageFragment = new ImageFragment();
-                imageFragment.setArguments(bundle);
-                FragmentManager manager = (Objects.requireNonNull(getActivity()))
-                        .getSupportFragmentManager();
-                assert manager != null;
-                manager.beginTransaction()
-                        //.setReorderingAllowed(true)
-                        // animation works well on emulator, but not on 21api device
-                        .addSharedElement(view, view.getTransitionName())
-                        .replace(R.id.container, imageFragment)
+                bundle.putString("id", collection.getId().toString());
+                CollectionPhotosFragment collectionPhotosFragment = new CollectionPhotosFragment();
+                collectionPhotosFragment.setArguments(bundle);
+                Objects.requireNonNull(getFragmentManager()).beginTransaction()
+                        .replace(R.id.container, collectionPhotosFragment)
                         .addToBackStack(null)
                         .commit();
             }
