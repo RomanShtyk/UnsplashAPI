@@ -7,16 +7,30 @@
     tools:context=".view.fragments.SearchFragment">
 
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rView"
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_matches_were_found"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/r_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.243" />
+
+    <com.example.unsplash.view.adapters.RecyclerViewEmptySupport
+        android:id="@+id/r_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.0" />
 
     <!--<android.support.design.widget.BottomNavigationView-->
         <!--android:id="@+id/navigationView"-->
@@ -49,7 +63,7 @@
             tools:layout_editor_absoluteX="16dp">
 
             <EditText
-                android:id="@+id/editSearch"
+                android:id="@+id/edit_search"
                 android:layout_width="wrap_content"
                 android:layout_height="43dp"
                 android:layout_margin="8dp"
@@ -88,7 +102,7 @@
                 android:layout_height="56dp"
                 android:layout_marginEnd="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/editSearch"
+                app:layout_constraintEnd_toStartOf="@+id/edit_search"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

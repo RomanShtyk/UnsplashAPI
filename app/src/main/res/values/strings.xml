@@ -12,4 +12,5 @@
     <string name="later">later</string>
     <string name="search1">Search</string>
     <string name="main">Main</string>
+    <string name="no_matches_were_found">No matches were found</string>
 </resources>

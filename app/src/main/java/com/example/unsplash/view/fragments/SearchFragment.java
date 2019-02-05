@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.transition.TransitionInflater;
 import android.view.KeyEvent;
@@ -19,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 
 import com.example.unsplash.R;
@@ -26,13 +26,14 @@ import com.example.unsplash.model.models.Collection;
 import com.example.unsplash.model.models.Photo;
 import com.example.unsplash.view.adapters.MyPagedListAdapter;
 import com.example.unsplash.view.adapters.PagedListOnClickListener;
+import com.example.unsplash.view.adapters.RecyclerViewEmptySupport;
 import com.example.unsplash.viewmodel.PhotoViewModel;
 
 import java.util.Objects;
 
 
 public class SearchFragment extends Fragment {
-    RecyclerView rv;
+    RecyclerViewEmptySupport rv;
     MyPagedListAdapter mAdapter;
     final int numberOfColumns = 2;
     Toolbar toolbar;
@@ -40,6 +41,7 @@ public class SearchFragment extends Fragment {
     ImageView searchButton;
     PhotoViewModel photoViewModel;
     PagedListOnClickListener listener;
+    TextView noMatchesTV;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,7 +61,6 @@ public class SearchFragment extends Fragment {
                 mAdapter.submitList(photos);
             }
         });
-        rv.setAdapter(mAdapter);
         return view;
     }
 
@@ -98,10 +99,15 @@ public class SearchFragment extends Fragment {
     }
 
     private void initView(View view) {
-        rv = view.findViewById(R.id.rView);
+        noMatchesTV = view.findViewById(R.id.empty);
+        listenerInit();
+        mAdapter = new MyPagedListAdapter(getActivity(), listener);
+        rv = view.findViewById(R.id.r_view);
+        rv.setAdapter(mAdapter);
         rv.setLayoutManager(new GridLayoutManager(view.getContext(), numberOfColumns));
+        rv.setEmptyView(noMatchesTV);
         searchButton = view.findViewById(R.id.search_button);
-        searchText = view.findViewById(R.id.editSearch);
+        searchText = view.findViewById(R.id.edit_search);
         searchText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -129,9 +135,5 @@ public class SearchFragment extends Fragment {
         });
         toolbar = view.findViewById(R.id.toolbar);
         ((AppCompatActivity) Objects.requireNonNull(getActivity())).setSupportActionBar(toolbar);
-        listenerInit();
-        mAdapter = new MyPagedListAdapter(getActivity(), listener);
     }
-
-
 }
