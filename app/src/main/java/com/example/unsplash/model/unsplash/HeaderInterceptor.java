@@ -11,7 +11,7 @@ public class HeaderInterceptor implements Interceptor {
 
     private String clientId;
 
-    HeaderInterceptor(String clientId) {
+    public  HeaderInterceptor(String clientId) {
         this.clientId = clientId;
     }
 
