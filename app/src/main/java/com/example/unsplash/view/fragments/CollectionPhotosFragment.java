@@ -8,16 +8,20 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.unsplash.R;
 import com.example.unsplash.model.models.Collection;
 import com.example.unsplash.model.models.Photo;
+import com.example.unsplash.view.MainActivity;
 import com.example.unsplash.view.adapters.MyPagedListAdapter;
 import com.example.unsplash.view.adapters.PagedListOnClickListener;
 import com.example.unsplash.viewmodel.PhotoViewModel;
@@ -32,6 +36,9 @@ public class CollectionPhotosFragment extends Fragment {
     PagedListOnClickListener listener;
     PhotoViewModel photoViewModel;
     String collectionId;
+    Toolbar toolbar;
+    String collectionName;
+    TextView collectionNameTV;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,8 +50,9 @@ public class CollectionPhotosFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_collection_photos, container, false);
+
+        ((MainActivity) Objects.requireNonNull(getActivity())).hideNavBar();
         assert getArguments() != null;
-        collectionId = getArguments().getString("id");
         photoViewModel.setIdCollection(collectionId);
         photoViewModel.collectionPhotosPagedList.observe(Objects.requireNonNull(getActivity()), new Observer<PagedList<Photo>>() {
             @Override
@@ -52,6 +60,9 @@ public class CollectionPhotosFragment extends Fragment {
                 mAdapter.submitList(photos);
             }
         });
+        collectionId = getArguments().getString("id");
+        collectionName = getArguments().getString("name");
+
         viewInit(view);
         return view;
     }
@@ -62,6 +73,10 @@ public class CollectionPhotosFragment extends Fragment {
         listenerInit();
         mAdapter = new MyPagedListAdapter(getActivity(), listener);
         rv.setAdapter(mAdapter);
+        toolbar = view.findViewById(R.id.toolbar);
+        ((AppCompatActivity) Objects.requireNonNull(getActivity())).setSupportActionBar(toolbar);
+        collectionNameTV = view.findViewById(R.id.toolbar_tv);
+        collectionNameTV.setText(collectionName);
     }
 
     private void listenerInit() {
@@ -73,6 +88,8 @@ public class CollectionPhotosFragment extends Fragment {
                 bundle.putString("URI", photo.getUrls().getRegular());
                 bundle.putString("SMTH", photo.getLikes().toString());
                 bundle.putString("TRANS", view.getTransitionName());
+                bundle.putString("ID", photo.getId());
+                bundle.putBoolean("ISLIKED", photo.getLikedByUser());
 
                 setReenterTransition(TransitionInflater
                         .from(getContext()).inflateTransition(android.R.transition.move).setDuration(100));

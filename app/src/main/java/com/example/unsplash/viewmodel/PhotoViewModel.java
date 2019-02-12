@@ -29,9 +29,11 @@ public class PhotoViewModel extends ViewModel {
         PhotoDataSourceFactory photoDataSourceFactory = new PhotoDataSourceFactory();
         //noinspection deprecation,unchecked
         photoPagedList = new LivePagedListBuilder(photoDataSourceFactory, config).build();
+
         SearchDataSourceFactory searchDataSourceFactory = new SearchDataSourceFactory("random");
         //noinspection deprecation,unchecked
         searchPagedList = new LivePagedListBuilder(searchDataSourceFactory, config).build();
+
         CollectionDataSourceFactory collectionDataSourceFactory = new CollectionDataSourceFactory();
         //noinspection deprecation,unchecked
         collectionPagedList = new LivePagedListBuilder(collectionDataSourceFactory, config).build();
@@ -44,9 +46,10 @@ public class PhotoViewModel extends ViewModel {
     }
 
     public void setIdCollection(String id){
-        CollectionPhotosDataSourceFactory collectionPhotosDataSourceFactory = new CollectionPhotosDataSourceFactory(id);
-        //noinspection deprecation,unchecked
-        collectionPhotosPagedList = new LivePagedListBuilder(collectionPhotosDataSourceFactory, config).build();
+      //  if(collectionPhotosPagedList == null) {
+            CollectionPhotosDataSourceFactory collectionPhotosDataSourceFactory = new CollectionPhotosDataSourceFactory(id);
+            //noinspection deprecation,unchecked
+            collectionPhotosPagedList = new LivePagedListBuilder(collectionPhotosDataSourceFactory, config).build();
+      //  }
     }
-
 }

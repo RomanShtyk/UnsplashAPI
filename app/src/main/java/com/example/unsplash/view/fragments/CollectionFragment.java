@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.example.unsplash.R;
 import com.example.unsplash.model.models.Collection;
 import com.example.unsplash.model.models.Photo;
+import com.example.unsplash.view.MainActivity;
 import com.example.unsplash.view.adapters.MyPagedListOneViewAdapter;
 import com.example.unsplash.view.adapters.PagedListOnClickListener;
 import com.example.unsplash.viewmodel.PhotoViewModel;
@@ -40,12 +41,12 @@ public class CollectionFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_collection, container, false);
+        ((MainActivity) Objects.requireNonNull(getActivity())).showNavBar();
         viewInit(view);
         photoViewModel.collectionPagedList.observe(this, new Observer<PagedList<Collection>>() {
             @Override
             public void onChanged(@Nullable PagedList<Collection> collections) {
                 mAdapter.submitList(collections);
-                photoViewModel.collectionPagedList.getValue();
             }
         });
 
@@ -72,6 +73,7 @@ public class CollectionFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 assert collection != null;
                 bundle.putString("id", collection.getId().toString());
+                bundle.putString("name", collection.getDescription());
                 CollectionPhotosFragment collectionPhotosFragment = new CollectionPhotosFragment();
                 collectionPhotosFragment.setArguments(bundle);
                 Objects.requireNonNull(getFragmentManager()).beginTransaction()

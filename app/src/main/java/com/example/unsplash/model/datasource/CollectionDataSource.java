@@ -22,22 +22,9 @@ public class CollectionDataSource extends PageKeyedDataSource<Integer, Collectio
 
 
     private UnsplashAPI unsplashAPI = Unsplash.getRetrofitInstance(CLIENT_ID).create(UnsplashAPI.class);
-    private final String SECRET = "b58b90999ac3418998afd075025bfe1541ccb15d60703ee945e8c5846a95862d";
-    private final String REDIRECT_URI = "urn:ietf:wg:oauth:2.0:oob";
-    private final String CODE = "code";
+
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull final LoadInitialCallback<Integer, Collection> callback) {
-//        unsplashAPI.getAccessToken(CLIENT_ID, SECRET, REDIRECT_URI, CODE, "authorization_code").enqueue(new Callback<AccessToken>() {
-//            @Override
-//            public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<AccessToken> call, Throwable t) {
-//
-//            }
-//        });
         unsplashAPI.getCollections(FIRST_PAGE).enqueue(new Callback<List<Collection>>() {
             @Override
             public void onResponse(@NonNull Call<List<Collection>> call, @NonNull Response<List<Collection>> response) {

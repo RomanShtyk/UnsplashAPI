@@ -13,4 +13,5 @@
     <string name="search1">Search</string>
     <string name="main">Main</string>
     <string name="no_matches_were_found">No matches were found</string>
+    <string name="login">Tap to login</string>
 </resources>

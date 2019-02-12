@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.example.unsplash.R;
 import com.example.unsplash.model.models.Collection;
+import com.example.unsplash.view.MainActivity;
 import com.example.unsplash.view.adapters.MyPagedListAdapter;
 import com.example.unsplash.model.models.Photo;
 import com.example.unsplash.view.adapters.PagedListOnClickListener;
@@ -41,6 +42,7 @@ public class ListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
+        ((MainActivity) Objects.requireNonNull(getActivity())).showNavBar();
         viewInit(view);
         photoViewModel.photoPagedList.observe(this, new Observer<PagedList<Photo>>() {
             @Override
@@ -68,6 +70,8 @@ public class ListFragment extends Fragment {
                 bundle.putString("URI", photo.getUrls().getRegular());
                 bundle.putString("SMTH", photo.getLikes().toString());
                 bundle.putString("TRANS", view.getTransitionName());
+                bundle.putString("ID", photo.getId());
+                bundle.putBoolean("ISLIKED", photo.getLikedByUser());
 
                 setReenterTransition(TransitionInflater
                         .from(getContext()).inflateTransition(android.R.transition.move).setDuration(100));

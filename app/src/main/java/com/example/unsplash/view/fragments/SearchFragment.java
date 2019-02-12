@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.example.unsplash.R;
 import com.example.unsplash.model.models.Collection;
 import com.example.unsplash.model.models.Photo;
+import com.example.unsplash.view.MainActivity;
 import com.example.unsplash.view.adapters.MyPagedListAdapter;
 import com.example.unsplash.view.adapters.PagedListOnClickListener;
 import com.example.unsplash.view.adapters.RecyclerViewEmptySupport;
@@ -53,6 +54,7 @@ public class SearchFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
+        ((MainActivity) Objects.requireNonNull(getActivity())).showNavBar();
         initView(view);
         //noinspection unchecked
         photoViewModel.searchPagedList.observe(Objects.requireNonNull(getActivity()), new Observer<PagedList<Photo>>() {
@@ -74,10 +76,11 @@ public class SearchFragment extends Fragment {
                 bundle.putString("URI", photo.getUrls().getRegular());
                 bundle.putString("SMTH", photo.getLikes().toString());
                 bundle.putString("TRANS", view.getTransitionName());
+                bundle.putString("ID", photo.getId());
+                bundle.putBoolean("ISLIKED", photo.getLikedByUser());
 
                 setReenterTransition(TransitionInflater
                         .from(getContext()).inflateTransition(android.R.transition.move).setDuration(100));
-
                 ImageFragment imageFragment = new ImageFragment();
                 imageFragment.setArguments(bundle);
                 FragmentManager manager = (Objects.requireNonNull(getActivity()))
@@ -85,6 +88,7 @@ public class SearchFragment extends Fragment {
                 assert manager != null;
                 manager.beginTransaction()
                         //.setReorderingAllowed(true)
+                        // animation works well on emulator, but not on 21api device
                         .addSharedElement(view, view.getTransitionName())
                         .replace(R.id.container, imageFragment)
                         .addToBackStack(null)
