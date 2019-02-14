@@ -6,6 +6,6 @@ import com.example.unsplash.model.models.Collection;
 import com.example.unsplash.model.models.Photo;
 
 public interface PagedListOnClickListener {
-    void onClick(View view, Photo photo);
+    void onClick(View view, Photo photo, int position);
     void onClickCollection(View view, Collection collection);
 }

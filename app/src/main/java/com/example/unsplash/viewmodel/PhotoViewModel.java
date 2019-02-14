@@ -46,10 +46,8 @@ public class PhotoViewModel extends ViewModel {
     }
 
     public void setIdCollection(String id){
-      //  if(collectionPhotosPagedList == null) {
             CollectionPhotosDataSourceFactory collectionPhotosDataSourceFactory = new CollectionPhotosDataSourceFactory(id);
             //noinspection deprecation,unchecked
             collectionPhotosPagedList = new LivePagedListBuilder(collectionPhotosDataSourceFactory, config).build();
-      //  }
     }
 }

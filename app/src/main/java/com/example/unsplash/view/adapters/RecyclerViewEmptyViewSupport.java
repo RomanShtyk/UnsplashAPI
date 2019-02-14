@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class RecyclerViewEmptySupport extends RecyclerView {
+public class RecyclerViewEmptyViewSupport extends RecyclerView {
     private View emptyView;
 
     private AdapterDataObserver emptyObserver = new AdapterDataObserver() {
@@ -15,26 +15,26 @@ public class RecyclerViewEmptySupport extends RecyclerView {
             if(adapter != null && emptyView != null) {
                 if(adapter.getItemCount() == 0) {
                     emptyView.setVisibility(View.VISIBLE);
-                    RecyclerViewEmptySupport.this.setVisibility(View.GONE);
+                    RecyclerViewEmptyViewSupport.this.setVisibility(View.GONE);
                 }
                 else {
                     emptyView.setVisibility(View.GONE);
-                    RecyclerViewEmptySupport.this.setVisibility(View.VISIBLE);
+                    RecyclerViewEmptyViewSupport.this.setVisibility(View.VISIBLE);
                 }
             }
 
         }
     };
 
-    public RecyclerViewEmptySupport(Context context) {
+    public RecyclerViewEmptyViewSupport(Context context) {
         super(context);
     }
 
-    public RecyclerViewEmptySupport(Context context, AttributeSet attrs) {
+    public RecyclerViewEmptyViewSupport(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public RecyclerViewEmptySupport(Context context, AttributeSet attrs, int defStyle) {
+    public RecyclerViewEmptyViewSupport(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 

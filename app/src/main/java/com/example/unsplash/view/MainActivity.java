@@ -35,9 +35,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
     public static String token;
     static boolean isFirst = true;
-    final Fragment listFragment = new ListFragment();
-    final Fragment searchFragment = new SearchFragment();
-    final Fragment collectionFragment = new CollectionFragment();
+    public final ListFragment listFragment = new ListFragment();
+    final SearchFragment searchFragment = new SearchFragment();
+    final CollectionFragment collectionFragment = new CollectionFragment();
     Fragment active = listFragment;
     Button login;
 
@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
                                 bottomNav.setVisibility(View.VISIBLE);
                             }
                         }
-
                         @Override
                         public void onFailure(@NonNull Call<AccessToken> call, @NonNull Throwable t) {
                             Log.d("mLog", "onFailure: ");

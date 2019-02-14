@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="@+id/toolbar"
         app:layout_constraintVertical_bias="0.243" />
 
-    <com.example.unsplash.view.adapters.RecyclerViewEmptySupport
+    <com.example.unsplash.view.adapters.RecyclerViewEmptyViewSupport
         android:id="@+id/r_view"
         android:layout_width="0dp"
         android:layout_height="0dp"

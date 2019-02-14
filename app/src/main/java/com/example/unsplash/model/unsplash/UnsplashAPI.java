@@ -31,6 +31,9 @@ public interface UnsplashAPI {
     @GET("/collections/{id}/photos")
     Call<List<Photo>> getCollectionPhotos(@Path("id") String id, @Query("page") int page);
 
+    @GET("photos/{id}")
+    Call<Photo> getPhoto(@Path("id") String id);
+
     @POST("photos/{id}/like")
     Call<LikePhotoResult> likeAPhoto(@Path("id") String id);
 

@@ -27,14 +27,14 @@ import com.example.unsplash.model.models.Photo;
 import com.example.unsplash.view.MainActivity;
 import com.example.unsplash.view.adapters.MyPagedListAdapter;
 import com.example.unsplash.view.adapters.PagedListOnClickListener;
-import com.example.unsplash.view.adapters.RecyclerViewEmptySupport;
+import com.example.unsplash.view.adapters.RecyclerViewEmptyViewSupport;
 import com.example.unsplash.viewmodel.PhotoViewModel;
 
 import java.util.Objects;
 
 
 public class SearchFragment extends Fragment {
-    RecyclerViewEmptySupport rv;
+    RecyclerViewEmptyViewSupport rv;
     MyPagedListAdapter mAdapter;
     final int numberOfColumns = 2;
     Toolbar toolbar;
@@ -70,7 +70,7 @@ public class SearchFragment extends Fragment {
     private void listenerInit() {
         listener = new PagedListOnClickListener() {
             @Override
-            public void onClick(View view, Photo photo) {
+            public void onClick(View view, Photo photo, int position) {
                 Bundle bundle = new Bundle();
                 assert photo != null;
                 bundle.putString("URI", photo.getUrls().getRegular());

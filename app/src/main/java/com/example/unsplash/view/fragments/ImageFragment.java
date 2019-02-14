@@ -1,6 +1,7 @@
 package com.example.unsplash.view.fragments;
 
 import android.annotation.SuppressLint;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -40,6 +41,7 @@ public class ImageFragment extends Fragment {
     ImageView image;
     TextView description;
     CheckBox likeButton;
+    public UnsplashAPI unsplashAPI;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,7 +73,7 @@ public class ImageFragment extends Fragment {
             photoId = getArguments().getString("ID");
             isLiked = getArguments().getBoolean("ISLIKED");
         }
-        final UnsplashAPI unsplashAPI = Unsplash.getRetrofitPostInstance(token).create(UnsplashAPI.class);
+        unsplashAPI = Unsplash.getRetrofitPostInstance(token).create(UnsplashAPI.class);
 
         description = view.findViewById(R.id.description);
         likeButton = view.findViewById(R.id.checkbox_like);
@@ -106,6 +108,8 @@ public class ImageFragment extends Fragment {
                         public void onResponse(@NonNull Call<LikePhotoResult> call, @NonNull Response<LikePhotoResult> response) {
                             if (response.isSuccessful()) {
                                 buttonView.setButtonDrawable(R.drawable.ic_thumb_up_true_24dp);
+                                //crutch for updating pagedlist
+                                ((MainActivity) Objects.requireNonNull(getActivity())).listFragment.refreshList();
                             }
                         }
 
@@ -119,6 +123,8 @@ public class ImageFragment extends Fragment {
                         @Override
                         public void onResponse(@NonNull Call<LikePhotoResult> call, @NonNull Response<LikePhotoResult> response) {
                             buttonView.setButtonDrawable(R.drawable.ic_thumb_up_grey_24dp);
+                            //crutch for updating pagedlist
+                            ((MainActivity) Objects.requireNonNull(getActivity())).listFragment.refreshList();
                         }
 
                         @Override
@@ -132,6 +138,4 @@ public class ImageFragment extends Fragment {
         });
 
     }
-
-
 }

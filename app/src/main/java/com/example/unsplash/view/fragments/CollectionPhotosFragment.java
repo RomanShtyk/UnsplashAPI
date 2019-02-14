@@ -82,7 +82,7 @@ public class CollectionPhotosFragment extends Fragment {
     private void listenerInit() {
         listener = new PagedListOnClickListener() {
             @Override
-            public void onClick(View view, Photo photo) {
+            public void onClick(View view, Photo photo, int position) {
                 Bundle bundle = new Bundle();
                 assert photo != null;
                 bundle.putString("URI", photo.getUrls().getRegular());

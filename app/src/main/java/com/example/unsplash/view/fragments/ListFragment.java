@@ -14,6 +14,7 @@ import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.example.unsplash.R;
 import com.example.unsplash.model.models.Collection;
 import com.example.unsplash.view.MainActivity;
@@ -30,7 +31,14 @@ public class ListFragment extends Fragment {
     RecyclerView rv;
     final int numberOfColumns = 2;
     PagedListOnClickListener listener;
-    PhotoViewModel photoViewModel;
+    public PhotoViewModel photoViewModel;
+    int pos = 0;
+    boolean needScroll = false;
+
+    public void refreshList() {
+        Objects.requireNonNull(photoViewModel.photoPagedList.getValue()).getDataSource().invalidate();
+        needScroll = true;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,10 +56,15 @@ public class ListFragment extends Fragment {
             @Override
             public void onChanged(@Nullable PagedList<Photo> photos) {
                 mAdapter.submitList(photos);
+                if(needScroll) {
+                    Objects.requireNonNull(rv.getLayoutManager()).scrollToPosition(pos);
+                    needScroll = false;
+                }
             }
         });
         return view;
     }
+
 
     private void viewInit(View view) {
         rv = view.findViewById(R.id.rView);
@@ -64,7 +77,7 @@ public class ListFragment extends Fragment {
     private void listenerInit() {
         listener = new PagedListOnClickListener() {
             @Override
-            public void onClick(View view, Photo photo) {
+            public void onClick(View view, Photo photo, int position) {
                 Bundle bundle = new Bundle();
                 assert photo != null;
                 bundle.putString("URI", photo.getUrls().getRegular());
@@ -72,7 +85,7 @@ public class ListFragment extends Fragment {
                 bundle.putString("TRANS", view.getTransitionName());
                 bundle.putString("ID", photo.getId());
                 bundle.putBoolean("ISLIKED", photo.getLikedByUser());
-
+                pos = position;
                 setReenterTransition(TransitionInflater
                         .from(getContext()).inflateTransition(android.R.transition.move).setDuration(100));
                 ImageFragment imageFragment = new ImageFragment();

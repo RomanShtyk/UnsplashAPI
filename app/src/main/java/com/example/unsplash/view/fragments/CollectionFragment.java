@@ -66,14 +66,14 @@ public class CollectionFragment extends Fragment {
     private void listenerInit() {
         listener = new PagedListOnClickListener() {
             @Override
-            public void onClick(View view, Photo photo) {
+            public void onClick(View view, Photo photo, int position) {
             }
             @Override
             public void onClickCollection(View view, Collection collection) {
                 Bundle bundle = new Bundle();
                 assert collection != null;
                 bundle.putString("id", collection.getId().toString());
-                bundle.putString("name", collection.getDescription());
+                bundle.putString("name", collection.getTitle());
                 CollectionPhotosFragment collectionPhotosFragment = new CollectionPhotosFragment();
                 collectionPhotosFragment.setArguments(bundle);
                 Objects.requireNonNull(getFragmentManager()).beginTransaction()

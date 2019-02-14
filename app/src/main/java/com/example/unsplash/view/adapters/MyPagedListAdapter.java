@@ -39,7 +39,7 @@ public class MyPagedListAdapter extends PagedListAdapter<Photo, MyPagedListAdapt
 
         @Override
         public void onClick(View v) {
-            mpListener.onClick(image, getItem(getAdapterPosition()));
+            mpListener.onClick(image, getItem(getAdapterPosition()), getAdapterPosition());
         }
     }
 
