@@ -1,6 +1,7 @@
 package com.example.unsplash.viewmodel;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
@@ -10,6 +11,7 @@ import com.example.unsplash.model.datasource.CollectionPhotosDataSourceFactory;
 import com.example.unsplash.model.datasource.PhotoDataSourceFactory;
 import com.example.unsplash.model.datasource.SearchDataSourceFactory;
 import com.example.unsplash.model.models.Collection;
+import com.example.unsplash.model.models.MyLikeChangerObject;
 import com.example.unsplash.model.models.Photo;
 
 
@@ -18,6 +20,7 @@ public class PhotoViewModel extends ViewModel {
     public LiveData<PagedList<Photo>> searchPagedList;
     public LiveData<PagedList<Collection>> collectionPagedList;
     public LiveData<PagedList<Photo>> collectionPhotosPagedList;
+    public MutableLiveData<MyLikeChangerObject> photoLikeChangerObject;
 
     private PagedList.Config config =
             (new PagedList.Config.Builder())
@@ -37,6 +40,14 @@ public class PhotoViewModel extends ViewModel {
         CollectionDataSourceFactory collectionDataSourceFactory = new CollectionDataSourceFactory();
         //noinspection deprecation,unchecked
         collectionPagedList = new LivePagedListBuilder(collectionDataSourceFactory, config).build();
+
+        MyLikeChangerObject my = new MyLikeChangerObject("a", false, -1);
+        photoLikeChangerObject = new MutableLiveData<>();
+        photoLikeChangerObject.setValue(my);
+    }
+
+    public void changeLike(MyLikeChangerObject myLikeChangerObject){
+        photoLikeChangerObject.setValue(myLikeChangerObject);
     }
 
     public void setQuery(String query) {

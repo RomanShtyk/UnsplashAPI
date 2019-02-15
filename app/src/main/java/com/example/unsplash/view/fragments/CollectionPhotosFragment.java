@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.example.unsplash.R;
 import com.example.unsplash.model.models.Collection;
+import com.example.unsplash.model.models.MyLikeChangerObject;
 import com.example.unsplash.model.models.Photo;
 import com.example.unsplash.view.MainActivity;
 import com.example.unsplash.view.adapters.MyPagedListAdapter;
@@ -62,6 +63,20 @@ public class CollectionPhotosFragment extends Fragment {
         });
         collectionId = getArguments().getString("id");
         collectionName = getArguments().getString("name");
+        photoViewModel.photoLikeChangerObject.observe(this, new Observer<MyLikeChangerObject>() {
+            @Override
+            public void onChanged(@Nullable MyLikeChangerObject myLikeChangerObject) {
+                assert myLikeChangerObject != null;
+                if(!(myLikeChangerObject.getPosition() == -1)){
+                    if(mAdapter.getCurrentList() != null) {
+                        Objects.requireNonNull(Objects.requireNonNull(mAdapter.getCurrentList()).get(myLikeChangerObject.getPosition())).setLikedByUser(myLikeChangerObject.isLiked());
+                        mAdapter.notifyItemChanged(myLikeChangerObject.getPosition());
+                        MyLikeChangerObject my = new MyLikeChangerObject("a", false, -1);
+                        photoViewModel.changeLike(my);
+                    }
+                }
+            }
+        });
 
         viewInit(view);
         return view;
@@ -90,7 +105,7 @@ public class CollectionPhotosFragment extends Fragment {
                 bundle.putString("TRANS", view.getTransitionName());
                 bundle.putString("ID", photo.getId());
                 bundle.putBoolean("ISLIKED", photo.getLikedByUser());
-
+                bundle.putInt("POS", position);
                 setReenterTransition(TransitionInflater
                         .from(getContext()).inflateTransition(android.R.transition.move).setDuration(100));
                 ImageFragment imageFragment = new ImageFragment();

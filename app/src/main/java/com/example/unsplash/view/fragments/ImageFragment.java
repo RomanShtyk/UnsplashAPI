@@ -1,7 +1,7 @@
 package com.example.unsplash.view.fragments;
 
 import android.annotation.SuppressLint;
-import android.os.AsyncTask;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,9 +18,11 @@ import android.widget.TextView;
 
 import com.example.unsplash.R;
 import com.example.unsplash.model.models.LikePhotoResult;
+import com.example.unsplash.model.models.MyLikeChangerObject;
 import com.example.unsplash.model.unsplash.Unsplash;
 import com.example.unsplash.model.unsplash.UnsplashAPI;
 import com.example.unsplash.view.MainActivity;
+import com.example.unsplash.viewmodel.PhotoViewModel;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -37,16 +39,19 @@ public class ImageFragment extends Fragment {
     String likes;
     String transName;
     String photoId;
+    int position;
     boolean isLiked;
     ImageView image;
     TextView description;
     CheckBox likeButton;
     public UnsplashAPI unsplashAPI;
+    PhotoViewModel photoViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((MainActivity) Objects.requireNonNull(getActivity())).hideNavBar();
+        photoViewModel = ViewModelProviders.of(getActivity()).get(PhotoViewModel.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             postponeEnterTransition();
             setSharedElementEnterTransition(TransitionInflater
@@ -72,6 +77,7 @@ public class ImageFragment extends Fragment {
             transName = getArguments().getString("TRANS");
             photoId = getArguments().getString("ID");
             isLiked = getArguments().getBoolean("ISLIKED");
+            position = getArguments().getInt("POS");
         }
         unsplashAPI = Unsplash.getRetrofitPostInstance(token).create(UnsplashAPI.class);
 
@@ -108,8 +114,9 @@ public class ImageFragment extends Fragment {
                         public void onResponse(@NonNull Call<LikePhotoResult> call, @NonNull Response<LikePhotoResult> response) {
                             if (response.isSuccessful()) {
                                 buttonView.setButtonDrawable(R.drawable.ic_thumb_up_true_24dp);
-                                //crutch for updating pagedlist
-                                ((MainActivity) Objects.requireNonNull(getActivity())).listFragment.refreshList();
+                                MyLikeChangerObject myLikeChangerObject = new MyLikeChangerObject(photoId, true, position);
+                                photoViewModel.changeLike(myLikeChangerObject);
+
                             }
                         }
 
@@ -123,8 +130,8 @@ public class ImageFragment extends Fragment {
                         @Override
                         public void onResponse(@NonNull Call<LikePhotoResult> call, @NonNull Response<LikePhotoResult> response) {
                             buttonView.setButtonDrawable(R.drawable.ic_thumb_up_grey_24dp);
-                            //crutch for updating pagedlist
-                            ((MainActivity) Objects.requireNonNull(getActivity())).listFragment.refreshList();
+                            MyLikeChangerObject myLikeChangerObject = new MyLikeChangerObject(photoId, false, position);
+                            photoViewModel.changeLike(myLikeChangerObject);
                         }
 
                         @Override

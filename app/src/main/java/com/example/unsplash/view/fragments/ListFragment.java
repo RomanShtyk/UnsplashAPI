@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.example.unsplash.R;
 import com.example.unsplash.model.models.Collection;
+import com.example.unsplash.model.models.MyLikeChangerObject;
 import com.example.unsplash.view.MainActivity;
 import com.example.unsplash.view.adapters.MyPagedListAdapter;
 import com.example.unsplash.model.models.Photo;
@@ -32,18 +33,12 @@ public class ListFragment extends Fragment {
     final int numberOfColumns = 2;
     PagedListOnClickListener listener;
     public PhotoViewModel photoViewModel;
-    int pos = 0;
-    boolean needScroll = false;
 
-    public void refreshList() {
-        Objects.requireNonNull(photoViewModel.photoPagedList.getValue()).getDataSource().invalidate();
-        needScroll = true;
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        photoViewModel = ViewModelProviders.of(this).get(PhotoViewModel.class);
+        photoViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(PhotoViewModel.class);
     }
 
     @Override
@@ -56,15 +51,25 @@ public class ListFragment extends Fragment {
             @Override
             public void onChanged(@Nullable PagedList<Photo> photos) {
                 mAdapter.submitList(photos);
-                if(needScroll) {
-                    Objects.requireNonNull(rv.getLayoutManager()).scrollToPosition(pos);
-                    needScroll = false;
+            }
+        });
+        photoViewModel.photoLikeChangerObject.observe(this, new Observer<MyLikeChangerObject>() {
+            @Override
+            public void onChanged(@Nullable MyLikeChangerObject myLikeChangerObject) {
+                assert myLikeChangerObject != null;
+                if(!(myLikeChangerObject.getPosition() == -1)){
+                    if(mAdapter.getCurrentList() != null) {
+                        Objects.requireNonNull(Objects.requireNonNull(mAdapter.getCurrentList()).get(myLikeChangerObject.getPosition())).setLikedByUser(myLikeChangerObject.isLiked());
+                        mAdapter.notifyItemChanged(myLikeChangerObject.getPosition());
+                        MyLikeChangerObject my = new MyLikeChangerObject("a", false, -1);
+                        photoViewModel.changeLike(my);
+                    }
                 }
             }
         });
+
         return view;
     }
-
 
     private void viewInit(View view) {
         rv = view.findViewById(R.id.rView);
@@ -85,7 +90,7 @@ public class ListFragment extends Fragment {
                 bundle.putString("TRANS", view.getTransitionName());
                 bundle.putString("ID", photo.getId());
                 bundle.putBoolean("ISLIKED", photo.getLikedByUser());
-                pos = position;
+                bundle.putInt("POS", position);
                 setReenterTransition(TransitionInflater
                         .from(getContext()).inflateTransition(android.R.transition.move).setDuration(100));
                 ImageFragment imageFragment = new ImageFragment();

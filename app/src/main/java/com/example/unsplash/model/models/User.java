@@ -118,7 +118,7 @@ public class User implements Parcelable {
         this.lastName = ((String) in.readValue((String.class.getClassLoader())));
         this.instagramUsername = ((String) in.readValue((String.class.getClassLoader())));
         this.twitterUsername = ((String) in.readValue((String.class.getClassLoader())));
-        this.portfolioUrl = ((Object) in.readValue((Object.class.getClassLoader())));
+        this.portfolioUrl = in.readValue((Object.class.getClassLoader()));
         this.bio = ((String) in.readValue((String.class.getClassLoader())));
         this.location = ((String) in.readValue((String.class.getClassLoader())));
         this.totalLikes = ((Integer) in.readValue((Integer.class.getClassLoader())));
