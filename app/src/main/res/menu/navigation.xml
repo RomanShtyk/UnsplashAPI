@@ -4,12 +4,12 @@
     <item
         android:id="@+id/navigation_search"
         android:icon="@drawable/baseline_search_black_18dp"
-        android:title="@string/search1"/>
+        android:title="@string/search1" />
 
     <item
         android:id="@+id/navigation_collections"
         android:icon="@drawable/baseline_dns_black_18dp"
-        android:title="@string/collections"/>
+        android:title="@string/collections" />
 
     <item
         android:id="@+id/navigation"

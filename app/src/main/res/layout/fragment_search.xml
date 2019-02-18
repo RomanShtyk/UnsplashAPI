@@ -89,13 +89,13 @@
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:layout_marginEnd="8dp"
+                android:contentDescription="@string/search"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/edit_search"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@tools:sample/avatars"
-                android:contentDescription="@string/search" />
+                tools:src="@tools:sample/avatars" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.Toolbar>
 </android.support.constraint.ConstraintLayout>
