@@ -14,4 +14,6 @@
     <string name="main">Main</string>
     <string name="no_matches_were_found">No matches were found</string>
     <string name="login">Tap to login</string>
+    <string name="button">Button</string>
+    <string name="continue_if_logged_in">Continue if logged in</string>
 </resources>

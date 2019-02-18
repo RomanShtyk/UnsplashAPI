@@ -22,8 +22,16 @@
         <Button
             android:id="@+id/login"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="365dp"
             android:text="@string/login" />
+
+        <Button
+            android:id="@+id/logged_in"
+            android:layout_width="match_parent"
+            android:layout_height="365dp"
+            android:layout_gravity="bottom"
+            android:text="@string/continue_if_logged_in" />
+
     </FrameLayout>
 
     <android.support.design.widget.BottomNavigationView
