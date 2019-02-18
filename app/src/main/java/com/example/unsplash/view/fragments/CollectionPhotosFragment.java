@@ -51,9 +51,10 @@ public class CollectionPhotosFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_collection_photos, container, false);
-
         ((MainActivity) Objects.requireNonNull(getActivity())).hideNavBar();
         assert getArguments() != null;
+        collectionId = getArguments().getString("id");
+        collectionName = getArguments().getString("name");
         photoViewModel.setIdCollection(collectionId);
         photoViewModel.collectionPhotosPagedList.observe(Objects.requireNonNull(getActivity()), new Observer<PagedList<Photo>>() {
             @Override
@@ -61,22 +62,20 @@ public class CollectionPhotosFragment extends Fragment {
                 mAdapter.submitList(photos);
             }
         });
-        collectionId = getArguments().getString("id");
-        collectionName = getArguments().getString("name");
-        photoViewModel.photoLikeChangerObject.observe(this, new Observer<MyLikeChangerObject>() {
-            @Override
-            public void onChanged(@Nullable MyLikeChangerObject myLikeChangerObject) {
-                assert myLikeChangerObject != null;
-                if(!(myLikeChangerObject.getPosition() == -1)){
-                    if(mAdapter.getCurrentList() != null) {
-                        Objects.requireNonNull(Objects.requireNonNull(mAdapter.getCurrentList()).get(myLikeChangerObject.getPosition())).setLikedByUser(myLikeChangerObject.isLiked());
-                        mAdapter.notifyItemChanged(myLikeChangerObject.getPosition());
-                        MyLikeChangerObject my = new MyLikeChangerObject("a", false, -1);
-                        photoViewModel.changeLike(my);
-                    }
-                }
-            }
-        });
+//        photoViewModel.photoLikeChangerObject.observe(this, new Observer<MyLikeChangerObject>() {
+//            @Override
+//            public void onChanged(@Nullable MyLikeChangerObject myLikeChangerObject) {
+//                assert myLikeChangerObject != null;
+//                if(!(myLikeChangerObject.getPosition() == -1)){
+//                    if(mAdapter.getCurrentList() != null) {
+//                        Objects.requireNonNull(Objects.requireNonNull(mAdapter.getCurrentList()).get(myLikeChangerObject.getPosition())).setLikedByUser(myLikeChangerObject.isLiked());
+//                        mAdapter.notifyItemChanged(myLikeChangerObject.getPosition());
+//                        MyLikeChangerObject my = new MyLikeChangerObject("a", false, -1);
+//                        photoViewModel.changeLike(my);
+//                    }
+//                }
+//            }
+//        });
 
         viewInit(view);
         return view;
@@ -101,7 +100,7 @@ public class CollectionPhotosFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 assert photo != null;
                 bundle.putString("URI", photo.getUrls().getRegular());
-                bundle.putString("SMTH", photo.getLikes().toString());
+                bundle.putInt("SMTH", photo.getLikes());
                 bundle.putString("TRANS", view.getTransitionName());
                 bundle.putString("ID", photo.getId());
                 bundle.putBoolean("ISLIKED", photo.getLikedByUser());

@@ -57,22 +57,23 @@ public class SearchDataSource extends PageKeyedDataSource<Integer, Photo> {
             }
         });
     }
-        @Override
-        public void loadAfter
-        (@NonNull final LoadParams < Integer > params, @NonNull final LoadCallback < Integer, Photo > callback){
-            unsplashAPI.searchPhotos(query, FIRST_PAGE).enqueue(new Callback<SearchResults>() {
-                @Override
-                public void onResponse(@NonNull Call<SearchResults> call, @NonNull Response<SearchResults> response) {
-                    if (response.body() != null) {
-                        Integer key = params.key + 1;
-                        callback.onResult(response.body().getResults(), key);
-                    }
-                }
 
-                @Override
-                public void onFailure(@NonNull Call<SearchResults> call, @NonNull Throwable t) {
-
+    @Override
+    public void loadAfter
+            (@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, Photo> callback) {
+        unsplashAPI.searchPhotos(query, FIRST_PAGE).enqueue(new Callback<SearchResults>() {
+            @Override
+            public void onResponse(@NonNull Call<SearchResults> call, @NonNull Response<SearchResults> response) {
+                if (response.body() != null) {
+                    Integer key = params.key + 1;
+                    callback.onResult(response.body().getResults(), key);
                 }
-            });
-        }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<SearchResults> call, @NonNull Throwable t) {
+
+            }
+        });
     }
+}

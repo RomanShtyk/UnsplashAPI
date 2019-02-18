@@ -17,9 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.unsplash.R;
-import com.example.unsplash.model.models.LikePhotoResult;
 import com.example.unsplash.model.models.MyLikeChangerObject;
-import com.example.unsplash.model.unsplash.Unsplash;
 import com.example.unsplash.model.unsplash.UnsplashAPI;
 import com.example.unsplash.view.MainActivity;
 import com.example.unsplash.viewmodel.PhotoViewModel;
@@ -28,15 +26,10 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
-import retrofit2.Call;
-import retrofit2.Response;
-
-import static com.example.unsplash.view.MainActivity.token;
-
 
 public class ImageFragment extends Fragment {
     String uri;
-    String likes;
+    int likes;
     String transName;
     String photoId;
     int position;
@@ -73,13 +66,12 @@ public class ImageFragment extends Fragment {
     private void initView(View view) {
         if (getArguments() != null) {
             uri = getArguments().getString("URI");
-            likes = getArguments().getString("SMTH");
+            likes = getArguments().getInt("SMTH");
             transName = getArguments().getString("TRANS");
             photoId = getArguments().getString("ID");
             isLiked = getArguments().getBoolean("ISLIKED");
             position = getArguments().getInt("POS");
         }
-        unsplashAPI = Unsplash.getRetrofitPostInstance(token).create(UnsplashAPI.class);
 
         description = view.findViewById(R.id.description);
         likeButton = view.findViewById(R.id.checkbox_like);
@@ -109,37 +101,19 @@ public class ImageFragment extends Fragment {
             @Override
             public void onCheckedChanged(final CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    unsplashAPI.likeAPhoto(photoId).enqueue(new retrofit2.Callback<LikePhotoResult>() {
-                        @Override
-                        public void onResponse(@NonNull Call<LikePhotoResult> call, @NonNull Response<LikePhotoResult> response) {
-                            if (response.isSuccessful()) {
-                                buttonView.setButtonDrawable(R.drawable.ic_thumb_up_true_24dp);
-                                MyLikeChangerObject myLikeChangerObject = new MyLikeChangerObject(photoId, true, position);
-                                photoViewModel.changeLike(myLikeChangerObject);
-
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(@NonNull Call<LikePhotoResult> call, @NonNull Throwable t) {
-
-                        }
-                    });
+                    photoViewModel.setLike(photoId);
+                    buttonView.setButtonDrawable(R.drawable.ic_thumb_up_true_24dp);
+                    MyLikeChangerObject myLikeChangerObject = new MyLikeChangerObject(photoId, true, position);
+                    photoViewModel.changeLike(myLikeChangerObject);
+                    likes++;
+                    description.setText("Likes:" + likes);
                 } else {
-                    unsplashAPI.dislikeAPhoto(photoId).enqueue(new retrofit2.Callback<LikePhotoResult>() {
-                        @Override
-                        public void onResponse(@NonNull Call<LikePhotoResult> call, @NonNull Response<LikePhotoResult> response) {
-                            buttonView.setButtonDrawable(R.drawable.ic_thumb_up_grey_24dp);
-                            MyLikeChangerObject myLikeChangerObject = new MyLikeChangerObject(photoId, false, position);
-                            photoViewModel.changeLike(myLikeChangerObject);
-                        }
-
-                        @Override
-                        public void onFailure(@NonNull Call<LikePhotoResult> call, @NonNull Throwable t) {
-
-                        }
-                    });
-
+                    photoViewModel.setDislike(photoId);
+                    buttonView.setButtonDrawable(R.drawable.ic_thumb_up_grey_24dp);
+                    MyLikeChangerObject myLikeChangerObject = new MyLikeChangerObject(photoId, false, position);
+                    photoViewModel.changeLike(myLikeChangerObject);
+                    likes--;
+                    description.setText("Likes:" + likes);
                 }
             }
         });

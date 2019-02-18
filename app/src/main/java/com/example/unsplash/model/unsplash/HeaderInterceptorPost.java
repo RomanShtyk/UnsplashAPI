@@ -17,6 +17,7 @@ public class HeaderInterceptorPost implements Interceptor {
         this.token = clientId;
     }
 
+    @NonNull
     @Override
     public Response intercept(@NonNull Interceptor.Chain chain) throws IOException {
         Request request = chain.request();

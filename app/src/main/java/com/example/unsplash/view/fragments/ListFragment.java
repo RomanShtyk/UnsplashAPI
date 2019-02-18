@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionInflater;
@@ -33,7 +34,11 @@ public class ListFragment extends Fragment {
     final int numberOfColumns = 2;
     PagedListOnClickListener listener;
     public PhotoViewModel photoViewModel;
+    private SwipeRefreshLayout swipeContainer;
 
+    private void refreshList() {
+        Objects.requireNonNull(photoViewModel.photoPagedList.getValue()).getDataSource().invalidate();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,9 +62,17 @@ public class ListFragment extends Fragment {
             @Override
             public void onChanged(@Nullable MyLikeChangerObject myLikeChangerObject) {
                 assert myLikeChangerObject != null;
-                if(!(myLikeChangerObject.getPosition() == -1)){
-                    if(mAdapter.getCurrentList() != null) {
+                if (!(myLikeChangerObject.getPosition() == -1)) {
+                    if (mAdapter.getCurrentList() != null) {
                         Objects.requireNonNull(Objects.requireNonNull(mAdapter.getCurrentList()).get(myLikeChangerObject.getPosition())).setLikedByUser(myLikeChangerObject.isLiked());
+
+                        //just increment or decrement likes value
+                        if (myLikeChangerObject.isLiked()) {
+                            Objects.requireNonNull(Objects.requireNonNull(mAdapter.getCurrentList()).get(myLikeChangerObject.getPosition())).setLikes(Objects.requireNonNull(Objects.requireNonNull(mAdapter.getCurrentList()).get(myLikeChangerObject.getPosition())).getLikes() + 1);
+                        } else {
+                            Objects.requireNonNull(Objects.requireNonNull(mAdapter.getCurrentList()).get(myLikeChangerObject.getPosition())).setLikes(Objects.requireNonNull(Objects.requireNonNull(mAdapter.getCurrentList()).get(myLikeChangerObject.getPosition())).getLikes() - 1);
+                        }
+
                         mAdapter.notifyItemChanged(myLikeChangerObject.getPosition());
                         MyLikeChangerObject my = new MyLikeChangerObject("a", false, -1);
                         photoViewModel.changeLike(my);
@@ -73,6 +86,24 @@ public class ListFragment extends Fragment {
 
     private void viewInit(View view) {
         rv = view.findViewById(R.id.rView);
+        swipeContainer = view.findViewById(R.id.swipeContainer);
+
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeContainer.setRefreshing(true);
+                refreshList();
+                swipeContainer.setRefreshing(false);
+            }
+        });
+
+
         rv.setLayoutManager(new GridLayoutManager(view.getContext(), numberOfColumns));
         listenerInit();
         mAdapter = new MyPagedListAdapter(getActivity(), listener);
@@ -86,7 +117,7 @@ public class ListFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 assert photo != null;
                 bundle.putString("URI", photo.getUrls().getRegular());
-                bundle.putString("SMTH", photo.getLikes().toString());
+                bundle.putInt("SMTH", photo.getLikes());
                 bundle.putString("TRANS", view.getTransitionName());
                 bundle.putString("ID", photo.getId());
                 bundle.putBoolean("ISLIKED", photo.getLikedByUser());

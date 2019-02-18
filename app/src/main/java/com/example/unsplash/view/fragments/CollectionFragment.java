@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -29,12 +30,17 @@ public class CollectionFragment extends Fragment {
     RecyclerView rv;
     MyPagedListOneViewAdapter mAdapter;
     PagedListOnClickListener listener;
+    private SwipeRefreshLayout swipeContainer;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         photoViewModel = ViewModelProviders.of(this).get(PhotoViewModel.class);
+    }
+
+    private void refreshList() {
+        Objects.requireNonNull(photoViewModel.collectionPagedList.getValue()).getDataSource().invalidate();
     }
 
     @Override
@@ -51,12 +57,28 @@ public class CollectionFragment extends Fragment {
         });
 
 
-        return  view;
+        return view;
     }
 
     private void viewInit(View view) {
         rv = view.findViewById(R.id.rView);
-        rv.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false));
+        swipeContainer = view.findViewById(R.id.swipeContainer);
+
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeContainer.setRefreshing(true);
+                refreshList();
+                swipeContainer.setRefreshing(false);
+            }
+        });
+
+        rv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         listenerInit();
 
         mAdapter = new MyPagedListOneViewAdapter(getActivity(), listener);
@@ -68,6 +90,7 @@ public class CollectionFragment extends Fragment {
             @Override
             public void onClick(View view, Photo photo, int position) {
             }
+
             @Override
             public void onClickCollection(View view, Collection collection) {
                 Bundle bundle = new Bundle();

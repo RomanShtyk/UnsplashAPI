@@ -69,8 +69,8 @@ public class SearchFragment extends Fragment {
             @Override
             public void onChanged(@Nullable MyLikeChangerObject myLikeChangerObject) {
                 assert myLikeChangerObject != null;
-                if(!(myLikeChangerObject.getPosition() == -1)){
-                    if(mAdapter.getCurrentList() != null) {
+                if (!(myLikeChangerObject.getPosition() == -1)) {
+                    if (mAdapter.getCurrentList() != null) {
                         Objects.requireNonNull(Objects.requireNonNull(mAdapter.getCurrentList()).get(myLikeChangerObject.getPosition())).setLikedByUser(myLikeChangerObject.isLiked());
                         mAdapter.notifyItemChanged(myLikeChangerObject.getPosition());
                         MyLikeChangerObject my = new MyLikeChangerObject("a", false, -1);
@@ -90,7 +90,7 @@ public class SearchFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 assert photo != null;
                 bundle.putString("URI", photo.getUrls().getRegular());
-                bundle.putString("SMTH", photo.getLikes().toString());
+                bundle.putInt("SMTH", photo.getLikes());
                 bundle.putString("TRANS", view.getTransitionName());
                 bundle.putString("ID", photo.getId());
                 bundle.putBoolean("ISLIKED", photo.getLikedByUser());

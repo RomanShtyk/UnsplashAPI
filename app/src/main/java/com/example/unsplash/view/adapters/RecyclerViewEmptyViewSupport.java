@@ -12,12 +12,11 @@ public class RecyclerViewEmptyViewSupport extends RecyclerView {
         @Override
         public void onChanged() {
             Adapter<?> adapter = getAdapter();
-            if(adapter != null && emptyView != null) {
-                if(adapter.getItemCount() == 0) {
+            if (adapter != null && emptyView != null) {
+                if (adapter.getItemCount() == 0) {
                     emptyView.setVisibility(View.VISIBLE);
                     RecyclerViewEmptyViewSupport.this.setVisibility(View.GONE);
-                }
-                else {
+                } else {
                     emptyView.setVisibility(View.GONE);
                     RecyclerViewEmptyViewSupport.this.setVisibility(View.VISIBLE);
                 }
@@ -42,7 +41,7 @@ public class RecyclerViewEmptyViewSupport extends RecyclerView {
     public void setAdapter(Adapter adapter) {
         super.setAdapter(adapter);
 
-        if(adapter != null) {
+        if (adapter != null) {
             adapter.registerAdapterDataObserver(emptyObserver);
         }
 
