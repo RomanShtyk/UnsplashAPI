@@ -10,6 +10,8 @@ import android.util.Log;
 
 import com.example.unsplash.model.datasource.CollectionDataSourceFactory;
 import com.example.unsplash.model.datasource.CollectionPhotosDataSourceFactory;
+import com.example.unsplash.model.datasource.FavouritesDataSource;
+import com.example.unsplash.model.datasource.FavouritesDataSourceFactory;
 import com.example.unsplash.model.datasource.PhotoDataSourceFactory;
 import com.example.unsplash.model.datasource.SearchDataSourceFactory;
 import com.example.unsplash.model.models.Collection;
@@ -27,6 +29,7 @@ import static com.example.unsplash.view.MainActivity.token;
 
 public class PhotoViewModel extends ViewModel {
     public LiveData<PagedList<Photo>> photoPagedList;
+    public LiveData<PagedList<Photo>> favouritesPagedList;
     public LiveData<PagedList<Photo>> searchPagedList;
     public LiveData<PagedList<Collection>> collectionPagedList;
     public LiveData<PagedList<Photo>> collectionPhotosPagedList;
@@ -55,6 +58,10 @@ public class PhotoViewModel extends ViewModel {
         MyLikeChangerObject my = new MyLikeChangerObject("a", false, -1);
         photoLikeChangerObject = new MutableLiveData<>();
         photoLikeChangerObject.setValue(my);
+
+        FavouritesDataSourceFactory favouritesDataSourceFactory = new FavouritesDataSourceFactory();
+        //noinspection deprecation,unchecked
+        favouritesPagedList = new LivePagedListBuilder(favouritesDataSourceFactory, config).build();
     }
 
     public void setLike(String id) {

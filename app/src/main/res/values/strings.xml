@@ -16,4 +16,6 @@
     <string name="login">Tap to login</string>
     <string name="button">Button</string>
     <string name="continue_if_logged_in">Continue if logged in</string>
+    <string name="error">ERROR</string>
+    <string name="liked">liked</string>
 </resources>

@@ -1,8 +1,6 @@
 package com.example.unsplash.view.fragments;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.arch.paging.PagedList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,7 +18,6 @@ import android.widget.TextView;
 
 import com.example.unsplash.R;
 import com.example.unsplash.model.models.Collection;
-import com.example.unsplash.model.models.MyLikeChangerObject;
 import com.example.unsplash.model.models.Photo;
 import com.example.unsplash.view.MainActivity;
 import com.example.unsplash.view.adapters.MyPagedListAdapter;
@@ -56,12 +53,7 @@ public class CollectionPhotosFragment extends Fragment {
         collectionId = getArguments().getString("id");
         collectionName = getArguments().getString("name");
         photoViewModel.setIdCollection(collectionId);
-        photoViewModel.collectionPhotosPagedList.observe(Objects.requireNonNull(getActivity()), new Observer<PagedList<Photo>>() {
-            @Override
-            public void onChanged(@Nullable PagedList<Photo> photos) {
-                mAdapter.submitList(photos);
-            }
-        });
+        photoViewModel.collectionPhotosPagedList.observe(Objects.requireNonNull(getActivity()), photos -> mAdapter.submitList(photos));
 //        photoViewModel.photoLikeChangerObject.observe(this, new Observer<MyLikeChangerObject>() {
 //            @Override
 //            public void onChanged(@Nullable MyLikeChangerObject myLikeChangerObject) {
@@ -113,7 +105,7 @@ public class CollectionPhotosFragment extends Fragment {
                         .getSupportFragmentManager();
                 assert manager != null;
                 manager.beginTransaction()
-                        //.setReorderingAllowed(true)
+                        .setReorderingAllowed(true)
                         // animation works well on emulator, but not on 21api device
                         .addSharedElement(view, view.getTransitionName())
                         .replace(R.id.container, imageFragment)

@@ -3,17 +3,17 @@
 
     <item
         android:id="@+id/navigation_search"
-        android:icon="@drawable/baseline_search_black_18dp"
+        android:icon="@drawable/baseline_image_search_24"
         android:title="@string/search1" />
 
     <item
         android:id="@+id/navigation_collections"
-        android:icon="@drawable/baseline_dns_black_18dp"
+        android:icon="@drawable/baseline_collections_24"
         android:title="@string/collections" />
 
     <item
         android:id="@+id/navigation"
-        android:icon="@drawable/baseline_crop_original_black_18dp"
+        android:icon="@drawable/baseline_home_24"
         android:title="@string/main" />
 
 </menu>

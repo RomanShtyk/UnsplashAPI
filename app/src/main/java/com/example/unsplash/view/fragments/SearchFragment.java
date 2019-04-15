@@ -58,24 +58,16 @@ public class SearchFragment extends Fragment {
         ((MainActivity) Objects.requireNonNull(getActivity())).showNavBar();
         initView(view);
         //noinspection unchecked
-        photoViewModel.searchPagedList.observe(Objects.requireNonNull(getActivity()), new Observer<PagedList<Photo>>() {
-            @Override
-            public void onChanged(@Nullable PagedList<Photo> photos) {
-                mAdapter.submitList(photos);
-            }
-        });
+        photoViewModel.searchPagedList.observe(Objects.requireNonNull(getActivity()), photos -> mAdapter.submitList(photos));
 
-        photoViewModel.photoLikeChangerObject.observe(this, new Observer<MyLikeChangerObject>() {
-            @Override
-            public void onChanged(@Nullable MyLikeChangerObject myLikeChangerObject) {
-                assert myLikeChangerObject != null;
-                if (!(myLikeChangerObject.getPosition() == -1)) {
-                    if (mAdapter.getCurrentList() != null) {
-                        Objects.requireNonNull(Objects.requireNonNull(mAdapter.getCurrentList()).get(myLikeChangerObject.getPosition())).setLikedByUser(myLikeChangerObject.isLiked());
-                        mAdapter.notifyItemChanged(myLikeChangerObject.getPosition());
-                        MyLikeChangerObject my = new MyLikeChangerObject("a", false, -1);
-                        photoViewModel.changeLike(my);
-                    }
+        photoViewModel.photoLikeChangerObject.observe(this, myLikeChangerObject -> {
+            assert myLikeChangerObject != null;
+            if (!(myLikeChangerObject.getPosition() == -1)) {
+                if (mAdapter.getCurrentList() != null) {
+                    Objects.requireNonNull(Objects.requireNonNull(mAdapter.getCurrentList()).get(myLikeChangerObject.getPosition())).setLikedByUser(myLikeChangerObject.isLiked());
+                    mAdapter.notifyItemChanged(myLikeChangerObject.getPosition());
+                    MyLikeChangerObject my = new MyLikeChangerObject("a", false, -1);
+                    photoViewModel.changeLike(my);
                 }
             }
         });
@@ -103,7 +95,7 @@ public class SearchFragment extends Fragment {
                         .getSupportFragmentManager();
                 assert manager != null;
                 manager.beginTransaction()
-                        //.setReorderingAllowed(true)
+                        .setReorderingAllowed(true)
                         // animation works well on emulator, but not on 21api device
                         .addSharedElement(view, view.getTransitionName())
                         .replace(R.id.container, imageFragment)
@@ -128,30 +120,19 @@ public class SearchFragment extends Fragment {
         rv.setEmptyView(noMatchesTV);
         searchButton = view.findViewById(R.id.search_button);
         searchText = view.findViewById(R.id.edit_search);
-        searchText.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))) {
-                    searchButton.callOnClick();
-                }
-                return false;
+        searchText.setOnKeyListener((v, keyCode, event) -> {
+            if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))) {
+                searchButton.callOnClick();
             }
+            return false;
         });
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                photoViewModel.photoPagedList
-                        .removeObservers(Objects.requireNonNull(Objects.requireNonNull(getFragmentManager())
-                                .findFragmentById(R.id.container)));
-                photoViewModel.setQuery(searchText.getText().toString());
-                photoViewModel.searchPagedList.observe(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(getFragmentManager())
-                        .findFragmentById(R.id.container))), new Observer<PagedList<Photo>>() {
-                    @Override
-                    public void onChanged(@Nullable PagedList<Photo> photos) {
-                        mAdapter.submitList(photos);
-                    }
-                });
-            }
+        searchButton.setOnClickListener(v -> {
+            photoViewModel.photoPagedList
+                    .removeObservers(Objects.requireNonNull(Objects.requireNonNull(getFragmentManager())
+                            .findFragmentById(R.id.container)));
+            photoViewModel.setQuery(searchText.getText().toString());
+            photoViewModel.searchPagedList.observe(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(getFragmentManager())
+                    .findFragmentById(R.id.container))), photos -> mAdapter.submitList(photos));
         });
         toolbar = view.findViewById(R.id.toolbar);
         ((AppCompatActivity) Objects.requireNonNull(getActivity())).setSupportActionBar(toolbar);

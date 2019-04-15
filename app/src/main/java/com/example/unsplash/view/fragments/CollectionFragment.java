@@ -1,8 +1,6 @@
 package com.example.unsplash.view.fragments;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.arch.paging.PagedList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -49,12 +47,7 @@ public class CollectionFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_collection, container, false);
         ((MainActivity) Objects.requireNonNull(getActivity())).showNavBar();
         viewInit(view);
-        photoViewModel.collectionPagedList.observe(this, new Observer<PagedList<Collection>>() {
-            @Override
-            public void onChanged(@Nullable PagedList<Collection> collections) {
-                mAdapter.submitList(collections);
-            }
-        });
+        photoViewModel.collectionPagedList.observe(this, collections -> mAdapter.submitList(collections));
 
 
         return view;
@@ -69,13 +62,10 @@ public class CollectionFragment extends Fragment {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeContainer.setRefreshing(true);
-                refreshList();
-                swipeContainer.setRefreshing(false);
-            }
+        swipeContainer.setOnRefreshListener(() -> {
+            swipeContainer.setRefreshing(true);
+            refreshList();
+            swipeContainer.setRefreshing(false);
         });
 
         rv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));

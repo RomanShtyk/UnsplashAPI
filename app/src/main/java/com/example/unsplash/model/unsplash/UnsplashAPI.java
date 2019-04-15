@@ -3,6 +3,7 @@ package com.example.unsplash.model.unsplash;
 import com.example.unsplash.model.models.AccessToken;
 import com.example.unsplash.model.models.Collection;
 import com.example.unsplash.model.models.LikePhotoResult;
+import com.example.unsplash.model.models.Me;
 import com.example.unsplash.model.models.Photo;
 import com.example.unsplash.model.models.SearchResults;
 
@@ -46,4 +47,10 @@ public interface UnsplashAPI {
                                      @Query("redirect_uri") String redirect_uri,
                                      @Query("code") String code,
                                      @Query("grant_type") String grant_type);
+
+    @GET("/users/{username}/likes")
+    Call<List<Photo>> getUserLikes(@Path("username") String username,
+                                   @Query("page") Integer page);
+    @GET("me")
+    Call<Me> getMeProfile();
 }

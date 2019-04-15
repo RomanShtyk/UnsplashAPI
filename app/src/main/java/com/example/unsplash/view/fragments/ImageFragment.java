@@ -12,13 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.unsplash.R;
 import com.example.unsplash.model.models.MyLikeChangerObject;
-import com.example.unsplash.model.unsplash.UnsplashAPI;
 import com.example.unsplash.view.MainActivity;
 import com.example.unsplash.viewmodel.PhotoViewModel;
 import com.squareup.picasso.Callback;
@@ -37,7 +35,6 @@ public class ImageFragment extends Fragment {
     ImageView image;
     TextView description;
     CheckBox likeButton;
-    public UnsplashAPI unsplashAPI;
     PhotoViewModel photoViewModel;
 
     @Override
@@ -97,24 +94,21 @@ public class ImageFragment extends Fragment {
         }
         likeButton.setChecked(isLiked);
 
-        likeButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(final CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    photoViewModel.setLike(photoId);
-                    buttonView.setButtonDrawable(R.drawable.ic_thumb_up_true_24dp);
-                    MyLikeChangerObject myLikeChangerObject = new MyLikeChangerObject(photoId, true, position);
-                    photoViewModel.changeLike(myLikeChangerObject);
-                    likes++;
-                    description.setText("Likes:" + likes);
-                } else {
-                    photoViewModel.setDislike(photoId);
-                    buttonView.setButtonDrawable(R.drawable.ic_thumb_up_grey_24dp);
-                    MyLikeChangerObject myLikeChangerObject = new MyLikeChangerObject(photoId, false, position);
-                    photoViewModel.changeLike(myLikeChangerObject);
-                    likes--;
-                    description.setText("Likes:" + likes);
-                }
+        likeButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                photoViewModel.setLike(photoId);
+                buttonView.setButtonDrawable(R.drawable.ic_thumb_up_true_24dp);
+                MyLikeChangerObject myLikeChangerObject = new MyLikeChangerObject(photoId, true, position);
+                photoViewModel.changeLike(myLikeChangerObject);
+                likes++;
+                description.setText("Likes:" + likes);
+            } else {
+                photoViewModel.setDislike(photoId);
+                buttonView.setButtonDrawable(R.drawable.ic_thumb_up_grey_24dp);
+                MyLikeChangerObject myLikeChangerObject = new MyLikeChangerObject(photoId, false, position);
+                photoViewModel.changeLike(myLikeChangerObject);
+                likes--;
+                description.setText("Likes:" + likes);
             }
         });
 
