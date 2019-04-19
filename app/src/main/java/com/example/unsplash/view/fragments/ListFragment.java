@@ -95,7 +95,7 @@ public class ListFragment extends Fragment {
             swipeContainer.setRefreshing(false);
         });
 
-        // todo "hide nav bar in imagefragment and favouritefragment"
+
         rv.setLayoutManager(new GridLayoutManager(view.getContext(), numberOfColumns));
         listenerInit();
         mAdapter = new MyPagedListAdapter(getActivity(), listener);

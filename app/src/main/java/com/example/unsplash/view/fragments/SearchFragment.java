@@ -56,6 +56,7 @@ public class SearchFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         ((MainActivity) Objects.requireNonNull(getActivity())).showNavBar();
+        ((MainActivity) Objects.requireNonNull(getActivity())).hideFab();
         initView(view);
         //noinspection unchecked
         photoViewModel.searchPagedList.observe(Objects.requireNonNull(getActivity()), photos -> mAdapter.submitList(photos));

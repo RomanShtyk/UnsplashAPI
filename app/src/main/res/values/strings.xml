@@ -18,4 +18,5 @@
     <string name="continue_if_logged_in">Continue if logged in</string>
     <string name="error">ERROR</string>
     <string name="liked">liked</string>
+    <string name="favourites">Favourites</string>
 </resources>

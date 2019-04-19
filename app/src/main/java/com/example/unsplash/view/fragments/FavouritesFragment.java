@@ -51,7 +51,6 @@ public class FavouritesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favourites, container, false);
-        ((MainActivity) Objects.requireNonNull(getActivity())).showNavBar();
         viewInit(view);
         photoViewModel.favouritesPagedList.observe(this, photos -> mAdapter.submitList(photos));
         photoViewModel.photoLikeChangerObject.observe(this, myLikeChangerObject -> {

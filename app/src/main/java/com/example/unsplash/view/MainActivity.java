@@ -187,13 +187,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("RestrictedApi")
     public void hideNavBar() {
         bottomNav.setVisibility(View.GONE);
+        fabUpload.setVisibility(View.GONE);
     }
 
+    @SuppressLint("RestrictedApi")
     public void showNavBar() {
         bottomNav.setVisibility(View.VISIBLE);
+        fabUpload.setVisibility(View.VISIBLE);
     }
 
+    @SuppressLint("RestrictedApi")
+    public void hideFab() {
+        fabUpload.setVisibility(View.GONE);
+    }
 
 }

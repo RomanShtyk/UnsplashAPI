@@ -46,6 +46,8 @@ public class CollectionFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_collection, container, false);
         ((MainActivity) Objects.requireNonNull(getActivity())).showNavBar();
+        ((MainActivity) Objects.requireNonNull(getActivity())).hideFab();
+
         viewInit(view);
         photoViewModel.collectionPagedList.observe(this, collections -> mAdapter.submitList(collections));
 
