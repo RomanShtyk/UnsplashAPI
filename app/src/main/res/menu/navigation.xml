@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_search"
+        android:id="@+id/navigation_searching"
         android:icon="@drawable/baseline_image_search_24"
         android:title="@string/search1" />
 
@@ -12,7 +12,7 @@
         android:title="@string/collections" />
 
     <item
-        android:id="@+id/navigation"
+        android:id="@+id/navigation_list"
         android:icon="@drawable/baseline_home_24"
         android:title="@string/main" />
 
