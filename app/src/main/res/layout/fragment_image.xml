@@ -47,4 +47,16 @@
         app:layout_constraintBottom_toBottomOf="@+id/description"
         app:layout_constraintEnd_toEndOf="@+id/description"
         app:layout_constraintTop_toTopOf="@+id/description" />
+
+    <ImageButton
+        android:id="@+id/downloadButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_file_download_black_24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/description"
+        app:layout_constraintEnd_toStartOf="@+id/checkbox_like"
+        app:layout_constraintTop_toBottomOf="@+id/bigImage" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -44,6 +44,8 @@ class CollectionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as MainActivity).showNavBar()
+        (activity as MainActivity).hideFab()
         viewInit()
     }
 
@@ -76,7 +78,9 @@ class CollectionFragment : Fragment() {
         bundle.putString("name", colletionPhotos.title)
         val collectionPhotosFragment = CollectionPhotosFragment()
         collectionPhotosFragment.arguments = bundle
-        exitTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.explode).setDuration(500)
+        exitTransition =
+            TransitionInflater.from(context).inflateTransition(android.R.transition.explode)
+                .setDuration(500)
         activity?.supportFragmentManager?.beginTransaction()
             ?.replace(R.id.container, collectionPhotosFragment)
             ?.addToBackStack(null)

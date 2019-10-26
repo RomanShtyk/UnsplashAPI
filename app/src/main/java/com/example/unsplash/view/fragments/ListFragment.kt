@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionInflater
 import com.example.unsplash.R
 import com.example.unsplash.model.models.MyLikeChangerObject
@@ -77,7 +76,7 @@ class ListFragment : Fragment() {
     }
 
     private fun viewInit() {
-        list_rv.layoutManager = GridLayoutManager(requireContext(), 3)
+        list_rv.layoutManager = GridLayoutManager(requireContext(), 2)
         mAdapter = MyPagedListAdapter(
             requireContext(),
             photoClickListener = { itemView, photo, i -> photoClick(itemView, photo, i) })
@@ -107,6 +106,7 @@ class ListFragment : Fragment() {
     private fun photoClick(view: View, photo: Photo, position: Int) {
         val bundle = Bundle()
         bundle.apply {
+            putString("RAW", photo.urls?.raw)
             putString("URI", photo.urls?.regular)
             photo.likes?.let { putInt("SMTH", it) }
             putString("ID", photo.id)

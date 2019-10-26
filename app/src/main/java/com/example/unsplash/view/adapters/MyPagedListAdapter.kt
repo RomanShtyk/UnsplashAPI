@@ -30,7 +30,7 @@ internal class MyPagedListAdapter(
                         .apply(
                             RequestOptions().dontTransform() // this line
                         )
-                        .thumbnail(0.1f).diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .thumbnail(0.03f).diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(picture)
                 } else {
                     Log.d("mLog", "onBindViewHolder: photo is null")

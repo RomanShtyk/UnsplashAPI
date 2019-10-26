@@ -28,7 +28,7 @@
         android:background="?android:attr/windowBackground"
         android:clickable="true"
         android:focusable="true"
-        android:visibility="visible"
+        android:visibility="gone"
         app:itemBackground="@color/colorPrimary"
         app:itemIconTint="@color/colorPrimaryDark"
         app:itemRippleColor="@color/colorPrimaryDark"

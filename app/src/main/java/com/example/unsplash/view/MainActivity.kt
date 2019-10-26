@@ -1,16 +1,18 @@
 package com.example.unsplash.view
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.view.View.*
 import android.view.animation.TranslateAnimation
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.unsplash.R
 import com.example.unsplash.model.models.AccessToken
@@ -18,6 +20,7 @@ import com.example.unsplash.model.models.Me
 import com.example.unsplash.model.unsplash.HeaderInterceptor
 import com.example.unsplash.model.unsplash.Unsplash
 import com.example.unsplash.model.unsplash.UnsplashAPI
+import com.example.unsplash.util.Const.WRITE_EXTERNAL_PERMISSION_CODE
 import com.example.unsplash.view.fragments.CollectionFragment
 import com.example.unsplash.view.fragments.ListFragment
 import com.example.unsplash.view.fragments.SearchFragment
@@ -44,10 +47,42 @@ class MainActivity : AppCompatActivity() {
         sp = applicationContext.getSharedPreferences("ACCESS_TOKEN", Context.MODE_PRIVATE)
         token = sp.getString("TOKEN", "").toString()
         username = sp.getString("USERNAME", "").toString()
-        viewInit()
-        if (intent.data != null) {
-            logIn()
+        checkPermissions()
+    }
+
+
+    private fun checkPermissions() {
+        when {
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED -> ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                WRITE_EXTERNAL_PERMISSION_CODE
+            )
+            else -> {
+                if (intent.data != null) {
+                    logIn()
+                } else {
+                    viewInit()
+                }
+            }
         }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+            checkPermissions()
+        } else if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_DENIED)) {
+            checkPermissions()
+        }
+        return
+
     }
 
     private fun logIn() {
@@ -83,6 +118,7 @@ class MainActivity : AppCompatActivity() {
                         override fun onResponse(call: Call<Me>, response: Response<Me>) {
                             editor.putString("USERNAME", response.body()?.username)
                             editor.apply()
+                            viewInit()
                         }
 
                         override fun onFailure(call: Call<Me>, t: Throwable) {
@@ -90,8 +126,8 @@ class MainActivity : AppCompatActivity() {
                         }
                     })
 
-                    navigationView.visibility = View.VISIBLE
-                    fab.visibility = View.VISIBLE
+                    animateNavigationBar(true)
+                    showFab()
                 }
             }
 
@@ -147,19 +183,18 @@ class MainActivity : AppCompatActivity() {
                 .hide(searchFragment).commit()
             fm.beginTransaction().add(R.id.container, listFragment, "1")
                 .commit()
+            showFab()
         } else {
-            fm.beginTransaction().add(R.id.container, StartPointFragment(), "2").commit()
+            fm.beginTransaction().add(R.id.container, StartPointFragment(), "4").commit()
         }
     }
 
     fun hideNavBar() {
-        navigationView.visibility = GONE
-        //animateNavigationBar(false)
+        animateNavigationBar(false)
         fab.visibility = GONE
     }
 
     fun showNavBar() {
-        //animateNavigationBar(true)
         navigationView.visibility = VISIBLE
     }
 
@@ -171,19 +206,19 @@ class MainActivity : AppCompatActivity() {
         fab.visibility = GONE
     }
 
-//    private fun animateNavigationBar(show: Boolean) {
-//        if (show) navigationView.visibility = VISIBLE
-//        val animate = TranslateAnimation(
-//            0f,
-//            0f,
-//            if (show) navigationView?.height?.toFloat() ?: 0f else 0f,
-//            if (show) 0f else navigationView?.height?.toFloat() ?: 0f
-//        )
-//        animate.duration = 170
-//        animate.fillAfter = show
-//        navigationView?.startAnimation(animate)
-//        if (!show) navigationView.visibility = INVISIBLE
-//    }
+    private fun animateNavigationBar(show: Boolean) {
+        if (show) navigationView.visibility = VISIBLE
+        val animate = TranslateAnimation(
+            0f,
+            0f,
+            if (show) navigationView?.height?.toFloat() ?: 0f else 0f,
+            if (show) 0f else navigationView?.height?.toFloat() ?: 0f
+        )
+        animate.duration = 170
+        animate.fillAfter = show
+        navigationView?.startAnimation(animate)
+        if (!show) navigationView.visibility = INVISIBLE
+    }
 
 
     private fun oneStepBack() {

@@ -1,5 +1,6 @@
 package com.example.unsplash.view.fragments
 
+import android.Manifest
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,14 +15,26 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import com.example.unsplash.R
 import com.example.unsplash.model.models.MyLikeChangerObject
 import com.example.unsplash.view.MainActivity
 import com.example.unsplash.viewmodel.PhotoViewModel
 import kotlinx.android.synthetic.main.fragment_image.*
+import android.app.DownloadManager
+import android.content.Context
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Environment
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.checkSelfPermission
+import com.example.unsplash.R
+import com.example.unsplash.util.Const.MAIN_FOLDER
+import com.example.unsplash.util.Const.MAIN_FOLDER_NAME
+import java.io.File
+
 
 class ImageFragment : Fragment() {
     private lateinit var uri: String
+    private lateinit var rawUri: String
     private var likes: Int = 0
     private lateinit var photoId: String
     private var position: Int = 0
@@ -35,8 +48,10 @@ class ImageFragment : Fragment() {
             ViewModelProvider((activity as MainActivity)).get(PhotoViewModel::class.java)
         sharedElementEnterTransition =
             TransitionInflater.from(context).inflateTransition(R.transition.default_transition)
-        exitTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
-        enterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
+        exitTransition =
+            TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
+        enterTransition =
+            TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
     }
 
     override fun onCreateView(
@@ -54,6 +69,7 @@ class ImageFragment : Fragment() {
 
     private fun initView() {
         if (arguments != null) {
+            rawUri = arguments!!.getString("RAW").toString()
             uri = arguments!!.getString("URI").toString()
             likes = arguments!!.getInt("SMTH")
             photoId = arguments!!.getString("ID").toString()
@@ -85,6 +101,9 @@ class ImageFragment : Fragment() {
                 description.text = "Likes:$likes"
             }
         }
+        downloadButton.setOnClickListener {
+            downloadPhoto(uri, photoId)
+        }
         postponeEnterTransition()
 
         Glide.with(this).load(uri)
@@ -115,4 +134,29 @@ class ImageFragment : Fragment() {
                 }
             }).into(bigImage)
     }
+
+    private fun downloadPhoto(url: String, name: String) {
+
+        val direct = File("$MAIN_FOLDER/$name")
+
+        if (!direct.exists()) {
+            direct.mkdir()
+        }
+
+        val dm = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val downloadUri = Uri.parse(url)
+        val request = DownloadManager.Request(downloadUri)
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+            .setAllowedOverRoaming(false)
+            .setTitle(name)
+            .setMimeType("image/jpeg")
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .setDestinationInExternalPublicDir(
+                Environment.DIRECTORY_PICTURES,
+                File.separator + MAIN_FOLDER_NAME + File.separator + name
+            )
+        dm.enqueue(request)
+
+    }
+
 }
