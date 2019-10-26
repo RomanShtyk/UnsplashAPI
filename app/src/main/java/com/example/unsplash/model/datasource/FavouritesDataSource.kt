@@ -5,16 +5,15 @@ import androidx.paging.PageKeyedDataSource
 import com.example.unsplash.model.models.Photo
 import com.example.unsplash.model.unsplash.Unsplash
 import com.example.unsplash.model.unsplash.UnsplashAPI
+import com.example.unsplash.view.MainActivity.Companion.token
+import com.example.unsplash.view.MainActivity.Companion.username
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import com.example.unsplash.view.MainActivity.Companion.token
-import com.example.unsplash.view.MainActivity.Companion.username
 
 class FavouritesDataSource : PageKeyedDataSource<Int, Photo>() {
     private val CLIENT_ID = "32ae08ce9a09a12cec94bc4ed85e1a5a01a8c3d2e83c103160e9ac8c36c3081d"
     private val unsplashAPI = Unsplash.getRetrofitPostInstance(token).create(UnsplashAPI::class.java)
-
 
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Photo>) {
         unsplashAPI.getUserLikes(username, FIRST_PAGE).enqueue(object : Callback<List<Photo>> {

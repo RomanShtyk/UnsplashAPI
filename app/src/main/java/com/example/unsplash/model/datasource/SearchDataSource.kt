@@ -22,7 +22,6 @@ class SearchDataSource internal constructor(private val query: String) : PageKey
             }
 
             override fun onFailure(call: Call<SearchResults>, t: Throwable) {
-
             }
         })
     }
@@ -37,7 +36,6 @@ class SearchDataSource internal constructor(private val query: String) : PageKey
             }
 
             override fun onFailure(call: Call<SearchResults>, t: Throwable) {
-
             }
         })
     }
@@ -52,7 +50,6 @@ class SearchDataSource internal constructor(private val query: String) : PageKey
             }
 
             override fun onFailure(call: Call<SearchResults>, t: Throwable) {
-
             }
         })
     }

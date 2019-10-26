@@ -7,8 +7,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.View.*
+import android.view.animation.TranslateAnimation
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.example.unsplash.R
 import com.example.unsplash.model.models.AccessToken
 import com.example.unsplash.model.models.Me
@@ -18,6 +21,7 @@ import com.example.unsplash.model.unsplash.UnsplashAPI
 import com.example.unsplash.view.fragments.CollectionFragment
 import com.example.unsplash.view.fragments.ListFragment
 import com.example.unsplash.view.fragments.SearchFragment
+import com.example.unsplash.view.fragments.StartPointFragment
 import kotlinx.android.synthetic.main.main_activity.*
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -25,8 +29,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import androidx.fragment.app.Fragment
-import com.example.unsplash.view.fragments.StartPointFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var sp: SharedPreferences
@@ -52,16 +54,21 @@ class MainActivity : AppCompatActivity() {
         val uri = intent.data
         val code: String = uri?.getQueryParameter("code").toString()
         val client = OkHttpClient.Builder()
-                .addInterceptor(HeaderInterceptor(Unsplash.CLIENT_ID)).build()
-
+            .addInterceptor(HeaderInterceptor(Unsplash.CLIENT_ID)).build()
         val retrofit = Retrofit.Builder()
-                .baseUrl(Unsplash.BASE_URL_POST)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+            .baseUrl(Unsplash.BASE_URL_POST)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
         val unsplashAPI = retrofit.create(UnsplashAPI::class.java)
 
-        val call = unsplashAPI.getAccessToken(Unsplash.CLIENT_ID, Unsplash.SECRET, Unsplash.REDIRECT_URI, code, "authorization_code")
+        val call = unsplashAPI.getAccessToken(
+            Unsplash.CLIENT_ID,
+            Unsplash.SECRET,
+            Unsplash.REDIRECT_URI,
+            code,
+            "authorization_code"
+        )
         call.enqueue(object : Callback<AccessToken> {
             override fun onResponse(call: Call<AccessToken>, response: Response<AccessToken>) {
                 if (response.isSuccessful) {
@@ -69,8 +76,9 @@ class MainActivity : AppCompatActivity() {
                     editor.putString("TOKEN", response.body()?.accessToken)
                     token = response.body()?.accessToken.toString()
                     editor.apply()
-                    val unsplashAPITokened = Unsplash.getRetrofitPostInstance(token).create(UnsplashAPI::class.java)
-                    val callMe = unsplashAPITokened.meProfile()
+                    val unsplashAPITokened =
+                        Unsplash.getRetrofitPostInstance(token).create(UnsplashAPI::class.java)
+                    val callMe = unsplashAPITokened.meProfile
                     callMe.enqueue(object : Callback<Me> {
                         override fun onResponse(call: Call<Me>, response: Response<Me>) {
                             editor.putString("USERNAME", response.body()?.username)
@@ -101,22 +109,20 @@ class MainActivity : AppCompatActivity() {
                 if (intent.resolveActivity(packageManager) != null)
                     startActivity(intent)
                 else
-                    Toast.makeText(applicationContext, getString(R.string.error), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        applicationContext,
+                        getString(R.string.error),
+                        Toast.LENGTH_SHORT
+                    ).show()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
-        navigationView.selectedItemId = R.id.listFragment
         navigationView.menu.getItem(2).isChecked = true
         navigationView.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.navigation_collections -> {
                     navigationView.menu.getItem(1).isChecked = true
-                    fm.fragments.forEach {
-                        if (it != collectionFragment && it.isAdded) {
-                            //hide(it)
-                        }
-                    }
                     fm.beginTransaction().hide(active).show(collectionFragment).commit()
                     active = collectionFragment
                 }
@@ -136,27 +142,63 @@ class MainActivity : AppCompatActivity() {
         navigationView.setOnNavigationItemReselectedListener { /*need this*/ }
         if (token != "") {
             fm.beginTransaction().add(R.id.container, collectionFragment, "2")
-                    .hide(collectionFragment).commit()
+                .hide(collectionFragment).commit()
             fm.beginTransaction().add(R.id.container, searchFragment, "3")
-                    .hide(searchFragment).commit()
-            fm.beginTransaction().add(R.id.container, listFragment, "1").hide(listFragment).commit()
+                .hide(searchFragment).commit()
+            fm.beginTransaction().add(R.id.container, listFragment, "1")
+                .commit()
         } else {
             fm.beginTransaction().add(R.id.container, StartPointFragment(), "2").commit()
         }
     }
 
     fun hideNavBar() {
-        navigationView.visibility = View.GONE
-        fab.visibility = View.GONE
+        navigationView.visibility = GONE
+        //animateNavigationBar(false)
+        fab.visibility = GONE
     }
 
     fun showNavBar() {
-        navigationView.visibility = View.VISIBLE
-        fab.visibility = View.VISIBLE
+        //animateNavigationBar(true)
+        navigationView.visibility = VISIBLE
+    }
+
+    fun showFab() {
+        fab.visibility = VISIBLE
     }
 
     fun hideFab() {
-        fab.visibility = View.GONE
+        fab.visibility = GONE
+    }
+
+//    private fun animateNavigationBar(show: Boolean) {
+//        if (show) navigationView.visibility = VISIBLE
+//        val animate = TranslateAnimation(
+//            0f,
+//            0f,
+//            if (show) navigationView?.height?.toFloat() ?: 0f else 0f,
+//            if (show) 0f else navigationView?.height?.toFloat() ?: 0f
+//        )
+//        animate.duration = 170
+//        animate.fillAfter = show
+//        navigationView?.startAnimation(animate)
+//        if (!show) navigationView.visibility = INVISIBLE
+//    }
+
+
+    private fun oneStepBack() {
+        val fts = supportFragmentManager.beginTransaction()
+        val fragmentManager = supportFragmentManager
+        if (fragmentManager.backStackEntryCount >= 2) {
+            fragmentManager.popBackStackImmediate()
+            fts.commit()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    override fun onBackPressed() {
+        oneStepBack()
     }
 
     companion object {

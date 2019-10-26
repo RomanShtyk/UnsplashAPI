@@ -50,7 +50,6 @@ class Result() : Parcelable {
         urls = parcel.readParcelable(Urls::class.java.classLoader)
     }
 
-
     override fun writeToParcel(dest: Parcel, flags: Int) {
         dest.writeValue(id)
         dest.writeValue(createdAt)

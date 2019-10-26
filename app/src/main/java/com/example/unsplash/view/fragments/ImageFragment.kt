@@ -1,28 +1,28 @@
 package com.example.unsplash.view.fragments
 
-import android.os.Build
+import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.transition.TransitionInflater
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.example.unsplash.R
 import com.example.unsplash.model.models.MyLikeChangerObject
 import com.example.unsplash.view.MainActivity
 import com.example.unsplash.viewmodel.PhotoViewModel
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_image.*
-import java.util.*
-
 
 class ImageFragment : Fragment() {
     private lateinit var uri: String
     private var likes: Int = 0
-    private lateinit var transName: String
     private lateinit var photoId: String
     private var position: Int = 0
     private var isLiked: Boolean = false
@@ -30,13 +30,20 @@ class ImageFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (Objects.requireNonNull<FragmentActivity>(activity) as MainActivity).hideNavBar()
-        photoViewModel = ViewModelProvider((Objects.requireNonNull<FragmentActivity>(activity) as MainActivity)).get(PhotoViewModel::class.java)
-        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+        (activity as MainActivity).hideNavBar()
+        photoViewModel =
+            ViewModelProvider((activity as MainActivity)).get(PhotoViewModel::class.java)
+        sharedElementEnterTransition =
+            TransitionInflater.from(context).inflateTransition(R.transition.default_transition)
+        exitTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
+        enterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_image, container, false)
     }
 
@@ -49,29 +56,18 @@ class ImageFragment : Fragment() {
         if (arguments != null) {
             uri = arguments!!.getString("URI").toString()
             likes = arguments!!.getInt("SMTH")
-            transName = arguments!!.getString("TRANS").toString()
             photoId = arguments!!.getString("ID").toString()
             isLiked = arguments!!.getBoolean("ISLIKED")
             position = arguments!!.getInt("POS")
         }
+        bigImage.transitionName = uri
         description.text = "Likes: $likes"
-        bigImage.transitionName = transName
-        Picasso.get().load(uri).noFade().into(bigImage, object : Callback {
-            override fun onSuccess() {
-                startPostponedEnterTransition()
-            }
-
-            override fun onError(e: Exception) {
-                startPostponedEnterTransition()
-            }
-        })
         if (isLiked) {
             checkbox_like.setButtonDrawable(R.drawable.ic_thumb_up_true_24dp)
         } else {
             checkbox_like.setButtonDrawable(R.drawable.ic_thumb_up_grey_24dp)
         }
         checkbox_like.isChecked = isLiked
-
         checkbox_like.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 photoViewModel.setLike(photoId)
@@ -89,6 +85,34 @@ class ImageFragment : Fragment() {
                 description.text = "Likes:$likes"
             }
         }
+        postponeEnterTransition()
 
+        Glide.with(this).load(uri)
+            .apply(
+                RequestOptions().dontTransform()
+            )
+            .centerCrop()
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    startPostponedEnterTransition()
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    startPostponedEnterTransition()
+                    return false
+                }
+            }).into(bigImage)
     }
 }

@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -19,8 +18,6 @@ import com.example.unsplash.view.MainActivity
 import com.example.unsplash.view.adapters.MyPagedListAdapter
 import com.example.unsplash.viewmodel.PhotoViewModel
 import kotlinx.android.synthetic.main.fragment_search.*
-import java.util.*
-
 
 class SearchFragment : Fragment() {
     private lateinit var mAdapter: MyPagedListAdapter
@@ -32,8 +29,11 @@ class SearchFragment : Fragment() {
         photoViewModel = ViewModelProvider(this).get(PhotoViewModel::class.java)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_search, container, false)
         (activity as MainActivity).showNavBar()
         (activity as MainActivity).hideFab()
@@ -58,7 +58,6 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initView()
     }
-
 
     private fun initView() {
         mAdapter = MyPagedListAdapter(requireContext(), photoClickListener = { itemView, photo, i -> photoClick(itemView, photo, i) })
@@ -92,18 +91,15 @@ class SearchFragment : Fragment() {
             putBoolean("ISLIKED", photo.likedByUser!!)
             putInt("POS", position)
         }
-        reenterTransition = TransitionInflater
-                .from(context).inflateTransition(android.R.transition.move).setDuration(100)
         val imageFragment = ImageFragment()
         imageFragment.arguments = bundle
-        val manager = Objects.requireNonNull<FragmentActivity>(activity)
-                .supportFragmentManager
-        manager.beginTransaction()
-                .setReorderingAllowed(true)
-                // animation works well on emulator, but not on 21api device
-                .addSharedElement(view, view.transitionName)
-                .replace(R.id.container, imageFragment)
-                .addToBackStack(null)
-                .commit()
+        reenterTransition = TransitionInflater
+                .from(context).inflateTransition(android.R.transition.explode).setDuration(100)
+
+        activity?.supportFragmentManager?.beginTransaction()
+                ?.addSharedElement(view, view.transitionName)
+                ?.replace(R.id.container, imageFragment)
+                ?.addToBackStack(null)
+                ?.commit()
     }
 }

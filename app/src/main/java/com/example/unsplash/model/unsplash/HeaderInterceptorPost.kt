@@ -1,9 +1,7 @@
 package com.example.unsplash.model.unsplash
 
 import java.io.IOException
-
 import okhttp3.Interceptor
-import okhttp3.Request
 import okhttp3.Response
 
 class HeaderInterceptorPost internal constructor(private val token: String) : Interceptor {

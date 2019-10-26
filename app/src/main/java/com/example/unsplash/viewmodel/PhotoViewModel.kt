@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.example.unsplash.model.datasource.*
-import com.example.unsplash.model.models.Collection
+import com.example.unsplash.model.models.ColletionPhotos
 import com.example.unsplash.model.models.LikePhotoResult
 import com.example.unsplash.model.models.MyLikeChangerObject
 import com.example.unsplash.model.models.Photo
@@ -22,7 +22,7 @@ class PhotoViewModel : ViewModel() {
     var photoPagedList: LiveData<PagedList<Photo>>
     var favouritesPagedList: LiveData<PagedList<Photo>>
     var searchPagedList: LiveData<PagedList<Photo>>
-    var collectionPagedList: LiveData<PagedList<Collection>>
+    var colletionPhotosPagedList: LiveData<PagedList<ColletionPhotos>>
     lateinit var collectionPhotosPagedList: LiveData<PagedList<Photo>>
     var photoLikeChangerObject: MutableLiveData<MyLikeChangerObject>
     private val unsplashAPI = Unsplash.getRetrofitPostInstance(token).create<UnsplashAPI>(UnsplashAPI::class.java)
@@ -40,7 +40,7 @@ class PhotoViewModel : ViewModel() {
         searchPagedList = LivePagedListBuilder(searchDataSourceFactory, config).build()
 
         val collectionDataSourceFactory = CollectionDataSourceFactory()
-        collectionPagedList = LivePagedListBuilder(collectionDataSourceFactory, config).build()
+        colletionPhotosPagedList = LivePagedListBuilder(collectionDataSourceFactory, config).build()
 
         val my = MyLikeChangerObject("a", false, -1)
         photoLikeChangerObject = MutableLiveData()

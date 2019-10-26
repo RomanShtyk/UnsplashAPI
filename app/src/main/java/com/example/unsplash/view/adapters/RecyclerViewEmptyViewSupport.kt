@@ -20,7 +20,6 @@ class RecyclerViewEmptyViewSupport : RecyclerView {
                     this@RecyclerViewEmptyViewSupport.visibility = View.VISIBLE
                 }
             }
-
         }
     }
 

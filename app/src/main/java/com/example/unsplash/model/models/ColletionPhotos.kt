@@ -2,13 +2,11 @@ package com.example.unsplash.model.models
 
 import android.os.Parcel
 import android.os.Parcelable
-
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-
 import java.util.Objects
 
-class Collection() : Parcelable {
+class ColletionPhotos() : Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -61,7 +59,7 @@ class Collection() : Parcelable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
-        val that = other as Collection?
+        val that = other as ColletionPhotos?
         return id == that!!.id &&
                 title == that.title &&
                 description == that.description &&
@@ -99,21 +97,20 @@ class Collection() : Parcelable {
         dest.writeValue(shareKey)
         dest.writeValue(coverPhoto)
         dest.writeValue(user)
-        //dest.writeValue(links);
+        // dest.writeValue(links);
     }
 
     override fun describeContents(): Int {
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<Collection> {
-        override fun createFromParcel(parcel: Parcel): Collection {
-            return Collection(parcel)
+    companion object CREATOR : Parcelable.Creator<ColletionPhotos> {
+        override fun createFromParcel(parcel: Parcel): ColletionPhotos {
+            return ColletionPhotos(parcel)
         }
 
-        override fun newArray(size: Int): Array<Collection?> {
+        override fun newArray(size: Int): Array<ColletionPhotos?> {
             return arrayOfNulls(size)
         }
     }
-
 }

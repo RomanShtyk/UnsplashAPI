@@ -5,7 +5,6 @@ import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-
 class User
 constructor(`in`: Parcel) : Parcelable {
 
@@ -102,7 +101,6 @@ constructor(`in`: Parcel) : Parcelable {
         this.downloads = `in`.readValue(Int::class.java.classLoader) as Int
     }
 
-
     //    public ProfileImage getProfileImage() {
     //        return profileImage;
     //    }
@@ -164,7 +162,6 @@ constructor(`in`: Parcel) : Parcelable {
         return 0
     }
 
-
     companion object CREATOR : Parcelable.Creator<User> {
         override fun createFromParcel(parcel: Parcel): User {
             return User(parcel)
@@ -174,5 +171,4 @@ constructor(`in`: Parcel) : Parcelable {
             return arrayOfNulls(size)
         }
     }
-
 }

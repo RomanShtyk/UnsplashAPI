@@ -8,13 +8,18 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.unsplash.R
-import com.example.unsplash.model.models.Collection
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_picture_main_activity.view.*
+import com.example.unsplash.model.models.ColletionPhotos
+import kotlinx.android.synthetic.main.list_item.view.*
 
-internal class MyPagedListOneViewAdapter(private val mContext: Context, private val mListener: (View, Collection, Int) -> Unit)
-    : PagedListAdapter<Collection, MyPagedListOneViewAdapter.MyPagedViewHolderOneView>(DIFF_CALLBACK) {
+internal class MyPagedListOneViewAdapter(
+    private val mContext: Context,
+    private val mListener: (View, ColletionPhotos, Int) -> Unit
+) :
+    PagedListAdapter<ColletionPhotos, MyPagedListOneViewAdapter.MyPagedViewHolderOneView>(
+        DIFF_CALLBACK
+    ) {
 
     inner class MyPagedViewHolderOneView(view: View) : RecyclerView.ViewHolder(view) {
         fun bind(i: Int) {
@@ -28,7 +33,9 @@ internal class MyPagedListOneViewAdapter(private val mContext: Context, private 
                 }
             }
             if (collection != null) {
-                Picasso.get().load(collection.coverPhoto?.urls?.regular).noFade().into(itemView.picture)
+                Glide.with(mContext).load(collection.coverPhoto?.urls?.regular)
+                    .thumbnail(0.1f)
+                    .into(itemView.picture)
             } else {
                 Log.d("mLog", "onBindViewHolder: photo is null")
             }
@@ -36,7 +43,8 @@ internal class MyPagedListOneViewAdapter(private val mContext: Context, private 
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): MyPagedViewHolderOneView {
-        val view: View = LayoutInflater.from(mContext).inflate(R.layout.item_picture_main_activity, viewGroup, false)
+        val view: View = LayoutInflater.from(mContext)
+            .inflate(R.layout.list_item, viewGroup, false)
         return MyPagedViewHolderOneView(view)
     }
 
@@ -46,15 +54,20 @@ internal class MyPagedListOneViewAdapter(private val mContext: Context, private 
 
     companion object {
 
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Collection>() {
-            override fun areItemsTheSame(collection: Collection, t1: Collection): Boolean {
-                return collection == t1
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ColletionPhotos>() {
+            override fun areItemsTheSame(
+                colletionPhotos: ColletionPhotos,
+                t1: ColletionPhotos
+            ): Boolean {
+                return colletionPhotos == t1
             }
 
-            override fun areContentsTheSame(collection: Collection, t1: Collection): Boolean {
-                return collection == t1
+            override fun areContentsTheSame(
+                colletionPhotos: ColletionPhotos,
+                t1: ColletionPhotos
+            ): Boolean {
+                return colletionPhotos == t1
             }
         }
     }
-
 }

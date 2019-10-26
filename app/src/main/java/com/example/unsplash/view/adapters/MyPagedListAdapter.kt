@@ -8,20 +8,30 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.unsplash.R
 import com.example.unsplash.model.models.Photo
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_picture_main_activity.view.*
+import kotlinx.android.synthetic.main.list_item.view.*
 
-internal class MyPagedListAdapter(private val mContext: Context, private val photoClickListener: (View, Photo, Int) -> Unit) : PagedListAdapter<Photo, MyPagedListAdapter.MyPagedViewHolder>(DIFF_CALLBACK) {
+internal class MyPagedListAdapter(
+    private val mContext: Context,
+    private val photoClickListener: (View, Photo, Int) -> Unit
+) : PagedListAdapter<Photo, MyPagedListAdapter.MyPagedViewHolder>(DIFF_CALLBACK) {
 
     internal inner class MyPagedViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         fun bind(i: Int) {
             itemView.apply {
                 val photo = getItem(i)
-                picture.transitionName = "" + i
+                picture.transitionName = photo?.urls?.regular
                 if (photo != null) {
-                    Picasso.get().load(photo.urls?.regular).noFade().into(picture)
+                    Glide.with(mContext).load(photo.urls?.regular)
+                        .apply(
+                            RequestOptions().dontTransform() // this line
+                        )
+                        .thumbnail(0.1f).diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(picture)
                 } else {
                     Log.d("mLog", "onBindViewHolder: photo is null")
                 }
@@ -35,7 +45,8 @@ internal class MyPagedListAdapter(private val mContext: Context, private val pho
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): MyPagedViewHolder {
-        val view: View = LayoutInflater.from(mContext).inflate(R.layout.item_picture_main_activity, viewGroup, false)
+        val view: View = LayoutInflater.from(mContext)
+            .inflate(R.layout.list_item, viewGroup, false)
         return MyPagedViewHolder(view)
     }
 

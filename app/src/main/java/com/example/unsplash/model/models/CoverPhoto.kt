@@ -136,5 +136,4 @@ class CoverPhoto() : Parcelable {
             return arrayOfNulls(size)
         }
     }
-
 }

@@ -12,7 +12,6 @@ object Unsplash {
     const val CLIENT_ID = "32ae08ce9a09a12cec94bc4ed85e1a5a01a8c3d2e83c103160e9ac8c36c3081d"
     const val UNSPLASH_UPLOAD_URL = "https://unsplash.com/submit"
 
-
     fun getRetrofitInstance(clientId: String): Retrofit {
         val client = OkHttpClient.Builder()
                 .addInterceptor(HeaderInterceptor(clientId)).build()
@@ -32,5 +31,4 @@ object Unsplash {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
     }
-
 }

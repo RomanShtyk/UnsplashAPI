@@ -2,11 +2,9 @@ package com.example.unsplash.model.datasource
 
 import android.util.Log
 import androidx.paging.PageKeyedDataSource
-
 import com.example.unsplash.model.models.Photo
 import com.example.unsplash.model.unsplash.Unsplash
 import com.example.unsplash.model.unsplash.UnsplashAPI
-
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,7 +37,6 @@ class CollectionPhotosDataSource internal constructor(private val id: String) : 
             }
 
             override fun onFailure(call: Call<List<Photo>>, t: Throwable) {
-
             }
         })
     }
@@ -54,7 +51,6 @@ class CollectionPhotosDataSource internal constructor(private val id: String) : 
             }
 
             override fun onFailure(call: Call<List<Photo>>, t: Throwable) {
-
             }
         })
     }

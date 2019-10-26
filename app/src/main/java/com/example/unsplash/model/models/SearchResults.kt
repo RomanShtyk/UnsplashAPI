@@ -42,5 +42,4 @@ class SearchResults() : Parcelable {
             return arrayOfNulls(size)
         }
     }
-
 }
