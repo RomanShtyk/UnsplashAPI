@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
+import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -22,6 +24,7 @@ import kotlinx.android.synthetic.main.fragment_list.*
 class ListFragment : Fragment() {
     private lateinit var mAdapter: MyPagedListAdapter
     private lateinit var photoViewModel: PhotoViewModel
+    private var isSearching = false
 
     private fun refreshList() {
         photoViewModel.photoPagedList.value?.dataSource?.invalidate()
@@ -30,8 +33,10 @@ class ListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         photoViewModel = ViewModelProvider(this).get(PhotoViewModel::class.java)
-        exitTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
-        enterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
+        exitTransition =
+            TransitionInflater.from(context).inflateTransition(android.R.transition.fade).setDuration(100)
+        enterTransition =
+            TransitionInflater.from(context).inflateTransition(android.R.transition.fade).setDuration(100)
     }
 
     override fun onCreateView(
@@ -90,8 +95,11 @@ class ListFragment : Fragment() {
                 ?.commit()
         }
         list_swipe_container.setOnRefreshListener {
-            list_swipe_container.isRefreshing = true
-            refreshList()
+            if (!isSearching) {
+                list_swipe_container.isRefreshing = true
+                refreshList()
+                list_swipe_container.isRefreshing = false
+            }
             list_swipe_container.isRefreshing = false
         }
 
@@ -101,6 +109,51 @@ class ListFragment : Fragment() {
             android.R.color.holo_orange_light,
             android.R.color.holo_red_light
         )
+
+        searchView.setOnQueryTextListener(object : OnQueryTextListener,
+            android.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                isSearching = true
+                query?.let { photoViewModel.setQuery(it) }
+                photoViewModel.searchPagedList.observe(
+                    this@ListFragment,
+                    Observer { mAdapter.submitList(it) })
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+
+        })
+
+        morePopup.setOnClickListener {
+            val popup = PopupMenu(requireContext(), it)
+            //Inflating the Popup using xml file
+            popup.apply {
+                menuInflater.inflate(R.menu.more_menu_popup, popup.menu)
+                //registering popup with OnMenuItemClickListener
+                setOnMenuItemClickListener { item ->
+                    when (item.itemId) {
+                        R.id.item_logout -> {
+                            //TODO logout func
+                            true
+                        }
+                        else -> true
+                    }
+                }
+                show()//showing popup menu
+            }
+        }
+
+        searchView.setOnCloseListener {
+            isSearching = false
+            searchView.onActionViewCollapsed()
+            photoViewModel.searchPagedList.removeObservers(this@ListFragment)
+            refreshList()
+            true
+        }
+
     }
 
     private fun photoClick(view: View, photo: Photo, position: Int) {

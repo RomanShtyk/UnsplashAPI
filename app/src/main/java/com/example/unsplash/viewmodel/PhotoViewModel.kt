@@ -25,34 +25,39 @@ class PhotoViewModel : ViewModel() {
     var colletionPhotosPagedList: LiveData<PagedList<ColletionPhotos>>
     lateinit var collectionPhotosPagedList: LiveData<PagedList<Photo>>
     var photoLikeChangerObject: MutableLiveData<MyLikeChangerObject>
-    private val unsplashAPI = Unsplash.getRetrofitPostInstance(token).create<UnsplashAPI>(UnsplashAPI::class.java)
+    private val unsplashAPI =
+        Unsplash.getRetrofitPostInstance(token).create<UnsplashAPI>(UnsplashAPI::class.java)
 
     private val config = PagedList.Config.Builder()
-            .setEnablePlaceholders(false)
-            .setPageSize(10)
-            .build()
+        .setEnablePlaceholders(false)
+        .setPageSize(10)
+        .build()
 
     init {
         val photoDataSourceFactory = PhotoDataSourceFactory()
         photoPagedList = LivePagedListBuilder(photoDataSourceFactory, config).build()
 
-        val searchDataSourceFactory = SearchDataSourceFactory("random")
+        val searchDataSourceFactory = SearchDataSourceFactory("")
         searchPagedList = LivePagedListBuilder(searchDataSourceFactory, config).build()
 
         val collectionDataSourceFactory = CollectionDataSourceFactory()
         colletionPhotosPagedList = LivePagedListBuilder(collectionDataSourceFactory, config).build()
 
-        val my = MyLikeChangerObject("a", false, -1)
-        photoLikeChangerObject = MutableLiveData()
-        photoLikeChangerObject.setValue(my)
-
         val favouritesDataSourceFactory = FavouritesDataSourceFactory()
         favouritesPagedList = LivePagedListBuilder(favouritesDataSourceFactory, config).build()
+
+        val my = MyLikeChangerObject("a", false, -1)
+        photoLikeChangerObject = MutableLiveData()
+        photoLikeChangerObject.value = my
     }
 
     fun setLike(id: String) {
         unsplashAPI.likeAPhoto(id).enqueue(object : retrofit2.Callback<LikePhotoResult> {
-            override fun onResponse(call: Call<LikePhotoResult>, response: Response<LikePhotoResult>) {}
+            override fun onResponse(
+                call: Call<LikePhotoResult>,
+                response: Response<LikePhotoResult>
+            ) {
+            }
 
             override fun onFailure(call: Call<LikePhotoResult>, t: Throwable) {
                 Log.d("mLog", "onFailure: set Like")
@@ -62,7 +67,11 @@ class PhotoViewModel : ViewModel() {
 
     fun setDislike(id: String) {
         unsplashAPI.dislikeAPhoto(id).enqueue(object : retrofit2.Callback<LikePhotoResult> {
-            override fun onResponse(call: Call<LikePhotoResult>, response: Response<LikePhotoResult>) {}
+            override fun onResponse(
+                call: Call<LikePhotoResult>,
+                response: Response<LikePhotoResult>
+            ) {
+            }
 
             override fun onFailure(call: Call<LikePhotoResult>, t: Throwable) {
                 Log.d("mLog", "onFailure: set Dislike")
@@ -81,6 +90,7 @@ class PhotoViewModel : ViewModel() {
 
     fun setIdCollection(id: String) {
         val collectionPhotosDataSourceFactory = CollectionPhotosDataSourceFactory(id)
-        collectionPhotosPagedList = LivePagedListBuilder(collectionPhotosDataSourceFactory, config).build()
+        collectionPhotosPagedList =
+            LivePagedListBuilder(collectionPhotosDataSourceFactory, config).build()
     }
 }

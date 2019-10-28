@@ -1,7 +1,6 @@
 package com.example.unsplash.view.fragments
 
 import android.os.Bundle
-import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +23,12 @@ class CollectionFragment : Fragment() {
         super.onCreate(savedInstanceState)
         photoViewModel =
             ViewModelProvider((activity as MainActivity)).get(PhotoViewModel::class.java)
+        exitTransition =
+            androidx.transition.TransitionInflater.from(context)
+                .inflateTransition(android.R.transition.fade)
+        enterTransition =
+            androidx.transition.TransitionInflater.from(context)
+                .inflateTransition(android.R.transition.fade)
     }
 
     private fun refreshList() {
@@ -78,9 +83,7 @@ class CollectionFragment : Fragment() {
         bundle.putString("name", colletionPhotos.title)
         val collectionPhotosFragment = CollectionPhotosFragment()
         collectionPhotosFragment.arguments = bundle
-        exitTransition =
-            TransitionInflater.from(context).inflateTransition(android.R.transition.explode)
-                .setDuration(500)
+
         activity?.supportFragmentManager?.beginTransaction()
             ?.replace(R.id.container, collectionPhotosFragment)
             ?.addToBackStack(null)

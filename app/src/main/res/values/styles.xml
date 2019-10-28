@@ -3,9 +3,9 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorSecondaryDarkGrey</item>
+        <item name="colorPrimaryDark">@color/colorSecondaryDarkGrey</item>
+        <item name="colorAccent">@color/colorYellow</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -18,6 +18,6 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
-        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:background">@color/colorSecondaryDarkGrey</item>
     </style>
 </resources>

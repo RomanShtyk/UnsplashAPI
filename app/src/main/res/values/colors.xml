@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FF8B00</color>
-    <color name="colorPrimaryDark">#444444</color>
-    <color name="colorAccent">#FFC60B</color>
-    <color name="colorGray">#444444</color>
     <color name="colorOrange">#FF8B00</color>
     <color name="colorYellow">#FFC60B</color>
     <color name="colorLight">#FEFFDB</color>
+    <color name="colorPrimaryLight">#F7F7F7</color>
+
+    <color name="colorPrimaryDarkmaastrichtBlue">#212121</color>
+    <color name="colorPrimaryMankeesBlue">#212121</color>
+    <color name="independence">#3a506b</color>
+    <color name="colorSecondaryDarkGrey">#121212</color>
+    <color name="aquamarine">#5bc0be</color>
+
 </resources>

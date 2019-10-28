@@ -1,14 +1,15 @@
 package com.example.unsplash.view.fragments
 
 import android.os.Bundle
-import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.transition.TransitionInflater
 import com.example.unsplash.R
 import com.example.unsplash.model.models.MyLikeChangerObject
 import com.example.unsplash.model.models.Photo
@@ -31,6 +32,12 @@ class FavouritesFragment : Fragment() {
         (activity as MainActivity).hideNavBar()
         photoViewModel =
             ViewModelProvider((activity as MainActivity)).get(PhotoViewModel::class.java)
+        exitTransition =
+            TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
+                .setDuration(100)
+        enterTransition =
+            TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
+                .setDuration(100)
     }
 
     override fun onCreateView(
@@ -38,7 +45,13 @@ class FavouritesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        postponeEnterTransition()
         val view = inflater.inflate(R.layout.fragment_favourites, container, false)
+        addObservers()
+        return view
+    }
+
+    private fun addObservers() {
         photoViewModel.favouritesPagedList.observe(this, Observer { mAdapter.submitList(it) })
         photoViewModel.photoLikeChangerObject.observe(this, Observer {
             assert(it != null)
@@ -62,13 +75,14 @@ class FavouritesFragment : Fragment() {
                 }
             }
         })
-
-        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewInit()
+        (view.parent as? ViewGroup)?.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
     }
 
     private fun viewInit() {
@@ -96,22 +110,22 @@ class FavouritesFragment : Fragment() {
     private fun photoClick(view: View, photo: Photo, position: Int) {
         val bundle = Bundle()
         bundle.apply {
+            putString("RAW", photo.urls?.raw)
             putString("URI", photo.urls?.regular)
-            putInt("SMTH", photo.likes!!)
-            putString("TRANS", view.transitionName)
+            photo.likes?.let { putInt("SMTH", it) }
             putString("ID", photo.id)
             photo.likedByUser?.let { putBoolean("ISLIKED", it) }
             putInt("POS", position)
         }
+
         val imageFragment = ImageFragment()
         imageFragment.arguments = bundle
-        reenterTransition = TransitionInflater
-            .from(context).inflateTransition(android.R.transition.move).setDuration(100)
 
         activity?.supportFragmentManager?.beginTransaction()
-            ?.addSharedElement(view, view.transitionName)
+            ?.setReorderingAllowed(true)
             ?.replace(R.id.container, imageFragment)
-            ?.addToBackStack(null)
+            ?.addToBackStack("image")
+            ?.addSharedElement(view, view.transitionName)
             ?.commit()
     }
 }

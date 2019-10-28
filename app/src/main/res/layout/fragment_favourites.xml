@@ -8,10 +8,10 @@
     tools:context=".view.MainActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/search_toolbar"
+        android:id="@+id/favourites_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorSecondaryDarkGrey"
         android:elevation="3dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,7 +48,11 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/favourites_swipe_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/favourites_rv"

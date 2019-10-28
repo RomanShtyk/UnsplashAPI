@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/colorSecondaryDarkGrey"
     android:orientation="horizontal"
     tools:context=".view.MainActivity">
 
@@ -14,29 +14,28 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/navigationView"
+        app:layout_constraintBottom_toBottomOf="@+id/navigationView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigationView"
         android:layout_width="0dp"
         android:layout_height="54dp"
-        android:background="?android:attr/windowBackground"
+        android:background="@color/colorSecondaryDarkGrey"
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
-        app:itemBackground="@color/colorPrimary"
-        app:itemIconTint="@color/colorPrimaryDark"
-        app:itemRippleColor="@color/colorPrimaryDark"
-        app:itemTextColor="@color/colorPrimaryDark"
+        app:itemBackground="@color/colorSecondaryDarkGrey"
+        app:itemHorizontalTranslationEnabled="true"
+        app:itemIconTint="@color/colorYellow"
+        app:itemTextColor="@color/colorYellow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:menu="@menu/navigation" />
+        app:menu="@menu/navigation"
+        tools:visibility="visible" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -50,8 +49,10 @@
         android:layout_marginBottom="8dp"
         android:clickable="true"
         android:focusable="true"
+        android:backgroundTint="@color/colorYellow"
         android:src="@drawable/baseline_add_box_24"
-        android:visibility="gone"
+        android:tint="@color/colorSecondaryDarkGrey"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.938"

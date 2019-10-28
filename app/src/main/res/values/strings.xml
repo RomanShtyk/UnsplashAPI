@@ -19,4 +19,6 @@
     <string name="error">ERROR</string>
     <string name="liked">liked</string>
     <string name="favourites">Favourites</string>
+    <string name="more">more</string>
+    <string name="logout">Logout</string>
 </resources>

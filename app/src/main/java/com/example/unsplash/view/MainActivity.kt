@@ -23,7 +23,6 @@ import com.example.unsplash.model.unsplash.UnsplashAPI
 import com.example.unsplash.util.Const.WRITE_EXTERNAL_PERMISSION_CODE
 import com.example.unsplash.view.fragments.CollectionFragment
 import com.example.unsplash.view.fragments.ListFragment
-import com.example.unsplash.view.fragments.SearchFragment
 import com.example.unsplash.view.fragments.StartPointFragment
 import kotlinx.android.synthetic.main.main_activity.*
 import okhttp3.OkHttpClient
@@ -37,7 +36,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var sp: SharedPreferences
     private val listFragment = ListFragment()
     private val collectionFragment = CollectionFragment()
-    private val searchFragment = SearchFragment()
     private var active: Fragment = listFragment
     private val fm = supportFragmentManager
 
@@ -154,21 +152,16 @@ class MainActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
         }
-        navigationView.menu.getItem(2).isChecked = true
+        navigationView.menu.getItem(1).isChecked = true
         navigationView.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.navigation_collections -> {
-                    navigationView.menu.getItem(1).isChecked = true
+                    navigationView.menu.getItem(0).isChecked = true
                     fm.beginTransaction().hide(active).show(collectionFragment).commit()
                     active = collectionFragment
                 }
-                R.id.navigation_searching -> {
-                    navigationView.menu.getItem(0).isChecked = true
-                    fm.beginTransaction().hide(active).show(searchFragment).commit()
-                    active = searchFragment
-                }
                 R.id.navigation_list -> {
-                    navigationView.menu.getItem(2).isChecked = true
+                    navigationView.menu.getItem(1).isChecked = true
                     fm.beginTransaction().hide(active).show(listFragment).commit()
                     active = listFragment
                 }
@@ -179,8 +172,6 @@ class MainActivity : AppCompatActivity() {
         if (token != "") {
             fm.beginTransaction().add(R.id.container, collectionFragment, "2")
                 .hide(collectionFragment).commit()
-            fm.beginTransaction().add(R.id.container, searchFragment, "3")
-                .hide(searchFragment).commit()
             fm.beginTransaction().add(R.id.container, listFragment, "1")
                 .commit()
             showFab()
@@ -207,17 +198,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun animateNavigationBar(show: Boolean) {
-        if (show) navigationView.visibility = VISIBLE
-        val animate = TranslateAnimation(
-            0f,
-            0f,
-            if (show) navigationView?.height?.toFloat() ?: 0f else 0f,
-            if (show) 0f else navigationView?.height?.toFloat() ?: 0f
-        )
-        animate.duration = 170
-        animate.fillAfter = show
-        navigationView?.startAnimation(animate)
-        if (!show) navigationView.visibility = INVISIBLE
+        if (navigationView.visibility == VISIBLE && !show || navigationView.visibility != VISIBLE && show) {
+            if (show) navigationView.visibility = VISIBLE
+            val animate = TranslateAnimation(
+                0f,
+                0f,
+                if (show) navigationView?.height?.toFloat() ?: 0f else 0f,
+                if (show) 0f else navigationView?.height?.toFloat() ?: 0f
+            )
+            animate.duration = 170
+            animate.fillAfter = show
+            navigationView?.startAnimation(animate)
+            if (!show) navigationView.visibility = INVISIBLE
+        }
     }
 
 

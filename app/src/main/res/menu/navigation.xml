@@ -2,11 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_searching"
-        android:icon="@drawable/baseline_image_search_24"
-        android:title="@string/search1" />
-
-    <item
         android:id="@+id/navigation_collections"
         android:icon="@drawable/baseline_collections_24"
         android:title="@string/collections" />

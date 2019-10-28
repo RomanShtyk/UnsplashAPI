@@ -1,8 +1,11 @@
 package com.example.unsplash.view.fragments
 
-import android.Manifest
+import android.app.DownloadManager
+import android.content.Context
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,20 +18,14 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.example.unsplash.R
 import com.example.unsplash.model.models.MyLikeChangerObject
+import com.example.unsplash.util.Const.MAIN_FOLDER
+import com.example.unsplash.util.Const.MAIN_FOLDER_NAME
 import com.example.unsplash.view.MainActivity
 import com.example.unsplash.viewmodel.PhotoViewModel
 import kotlinx.android.synthetic.main.fragment_image.*
-import android.app.DownloadManager
-import android.content.Context
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Environment
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.checkSelfPermission
-import com.example.unsplash.R
-import com.example.unsplash.util.Const.MAIN_FOLDER
-import com.example.unsplash.util.Const.MAIN_FOLDER_NAME
+import org.jetbrains.anko.toast
 import java.io.File
 
 
@@ -141,22 +138,21 @@ class ImageFragment : Fragment() {
 
         if (!direct.exists()) {
             direct.mkdir()
+            val dm = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            val downloadUri = Uri.parse(url)
+            val request = DownloadManager.Request(downloadUri)
+            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                .setAllowedOverRoaming(false)
+                .setTitle(name)
+                .setMimeType("image/jpeg")
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setDestinationInExternalPublicDir(
+                    Environment.DIRECTORY_PICTURES,
+                    File.separator + MAIN_FOLDER_NAME + File.separator + name
+                )
+            dm.enqueue(request)
+        } else {
+            activity?.toast("Already downloaded")
         }
-
-        val dm = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        val downloadUri = Uri.parse(url)
-        val request = DownloadManager.Request(downloadUri)
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-            .setAllowedOverRoaming(false)
-            .setTitle(name)
-            .setMimeType("image/jpeg")
-            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            .setDestinationInExternalPublicDir(
-                Environment.DIRECTORY_PICTURES,
-                File.separator + MAIN_FOLDER_NAME + File.separator + name
-            )
-        dm.enqueue(request)
-
     }
-
 }
