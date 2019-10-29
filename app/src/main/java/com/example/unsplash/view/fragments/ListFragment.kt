@@ -11,6 +11,7 @@ import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.transition.TransitionInflater
 import com.example.unsplash.R
@@ -25,18 +26,26 @@ class ListFragment : Fragment() {
     private lateinit var mAdapter: MyPagedListAdapter
     private lateinit var photoViewModel: PhotoViewModel
     private var isSearching = false
+    private val observer = Observer<PagedList<Photo>> { mAdapter.submitList(it) }
 
     private fun refreshList() {
-        photoViewModel.photoPagedList.value?.dataSource?.invalidate()
+      //  photoViewModel.photoPagedList.value?.dataSource?.invalidate()
+        photoViewModel.list.value?.dataSource?.invalidate()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         photoViewModel = ViewModelProvider(this).get(PhotoViewModel::class.java)
         exitTransition =
-            TransitionInflater.from(context).inflateTransition(android.R.transition.fade).setDuration(100)
+            TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
+                .setDuration(100)
         enterTransition =
-            TransitionInflater.from(context).inflateTransition(android.R.transition.fade).setDuration(100)
+            TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
+                .setDuration(100)
+        addObservers()
+        mAdapter = MyPagedListAdapter(
+            requireContext(),
+            photoClickListener = { itemView, photo, i -> photoClick(itemView, photo, i) })
     }
 
     override fun onCreateView(
@@ -47,7 +56,13 @@ class ListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_list, container, false)
         postponeEnterTransition()
         (activity as MainActivity).showNavBar()
-        photoViewModel.photoPagedList.observe(this, Observer { mAdapter.submitList(it) })
+        return view
+    }
+
+    private fun addObservers() {
+        photoViewModel.list.observe(this, observer)
+//        photoViewModel.searchPagedList.observe(this, observer)
+//        photoViewModel.photoPagedList.observe(this, observer)
         photoViewModel.photoLikeChangerObject.observe(this, Observer {
             if (it != null) {
                 if (it.position != -1) {
@@ -61,7 +76,6 @@ class ListFragment : Fragment() {
                             mAdapter.currentList!![it.position]?.likes =
                                 mAdapter.currentList!![it.position]?.likes?.minus(1)
                         }
-
                         mAdapter.notifyItemChanged(it.position)
                         val my = MyLikeChangerObject("a", false, -1)
                         photoViewModel.changeLike(my)
@@ -69,7 +83,6 @@ class ListFragment : Fragment() {
                 }
             }
         })
-        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -82,10 +95,8 @@ class ListFragment : Fragment() {
 
     private fun viewInit() {
         list_rv.layoutManager = GridLayoutManager(requireContext(), 2)
-        mAdapter = MyPagedListAdapter(
-            requireContext(),
-            photoClickListener = { itemView, photo, i -> photoClick(itemView, photo, i) })
         list_rv.adapter = mAdapter
+        list_rv.setEmptyView(empty)
         (activity as AppCompatActivity).setSupportActionBar(list_toolbar)
         favourite.setOnClickListener {
             val favouritesFragment = FavouritesFragment()
@@ -110,22 +121,34 @@ class ListFragment : Fragment() {
             android.R.color.holo_red_light
         )
 
-        searchView.setOnQueryTextListener(object : OnQueryTextListener,
-            android.widget.SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                isSearching = true
-                query?.let { photoViewModel.setQuery(it) }
-                photoViewModel.searchPagedList.observe(
-                    this@ListFragment,
-                    Observer { mAdapter.submitList(it) })
-                return false
-            }
+        searchView.apply {
+            setOnQueryTextListener(object : OnQueryTextListener,
+                android.widget.SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    isSearching = true
+                    query?.let { photoViewModel.setQuery(it) }
+                    photoViewModel.list.removeObservers(this@ListFragment)
+                    query?.let { photoViewModel.getList(it) }
+                    photoViewModel.list.observe(this@ListFragment, observer)
+                    return false
+                }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return false
-            }
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    return false
+                }
 
-        })
+            })
+
+            setOnCloseListener {
+                isSearching = false
+                searchView.onActionViewCollapsed()
+                photoViewModel.list.removeObservers(this@ListFragment)
+                photoViewModel.getList("")
+                photoViewModel.list.observe(this@ListFragment, observer)
+                refreshList()
+                true
+            }
+        }
 
         morePopup.setOnClickListener {
             val popup = PopupMenu(requireContext(), it)
@@ -145,15 +168,6 @@ class ListFragment : Fragment() {
                 show()//showing popup menu
             }
         }
-
-        searchView.setOnCloseListener {
-            isSearching = false
-            searchView.onActionViewCollapsed()
-            photoViewModel.searchPagedList.removeObservers(this@ListFragment)
-            refreshList()
-            true
-        }
-
     }
 
     private fun photoClick(view: View, photo: Photo, position: Int) {

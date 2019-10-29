@@ -32,7 +32,7 @@ class CollectionFragment : Fragment() {
     }
 
     private fun refreshList() {
-        photoViewModel.colletionPhotosPagedList.value?.dataSource?.invalidate()
+        photoViewModel.collectionsPagedList.value?.dataSource?.invalidate()
     }
 
     override fun onCreateView(
@@ -41,7 +41,7 @@ class CollectionFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_collection, container, false)
-        photoViewModel.colletionPhotosPagedList.observe(
+        photoViewModel.collectionsPagedList.observe(
             this@CollectionFragment,
             Observer { mAdapter.submitList(it) })
         return view

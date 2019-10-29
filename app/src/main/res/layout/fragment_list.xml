@@ -30,6 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:foregroundTint="@color/colorYellow"
+                android:maxWidth="300dp"
                 android:searchIcon="@drawable/baseline_search_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/favourite"
@@ -81,7 +82,7 @@
         app:layout_constraintTop_toBottomOf="@+id/list_toolbar"
         app:layout_constraintVertical_bias="0.0">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <com.example.unsplash.view.adapters.RecyclerViewEmptyViewSupport
             android:id="@+id/list_rv"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -91,8 +92,19 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_matches"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

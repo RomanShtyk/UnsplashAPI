@@ -14,15 +14,17 @@ import com.example.unsplash.model.models.Photo
 import com.example.unsplash.model.unsplash.Unsplash
 import com.example.unsplash.model.unsplash.UnsplashAPI
 import com.example.unsplash.view.MainActivity.Companion.token
+import com.example.unsplash.view.fragments.ListFragment
 import retrofit2.Call
 import retrofit2.Response
 
 
 class PhotoViewModel : ViewModel() {
+    var list: LiveData<PagedList<Photo>>
     var photoPagedList: LiveData<PagedList<Photo>>
     var favouritesPagedList: LiveData<PagedList<Photo>>
     var searchPagedList: LiveData<PagedList<Photo>>
-    var colletionPhotosPagedList: LiveData<PagedList<ColletionPhotos>>
+    var collectionsPagedList: LiveData<PagedList<ColletionPhotos>>
     lateinit var collectionPhotosPagedList: LiveData<PagedList<Photo>>
     var photoLikeChangerObject: MutableLiveData<MyLikeChangerObject>
     private val unsplashAPI =
@@ -34,17 +36,11 @@ class PhotoViewModel : ViewModel() {
         .build()
 
     init {
-        val photoDataSourceFactory = PhotoDataSourceFactory()
-        photoPagedList = LivePagedListBuilder(photoDataSourceFactory, config).build()
-
-        val searchDataSourceFactory = SearchDataSourceFactory("")
-        searchPagedList = LivePagedListBuilder(searchDataSourceFactory, config).build()
-
-        val collectionDataSourceFactory = CollectionDataSourceFactory()
-        colletionPhotosPagedList = LivePagedListBuilder(collectionDataSourceFactory, config).build()
-
-        val favouritesDataSourceFactory = FavouritesDataSourceFactory()
-        favouritesPagedList = LivePagedListBuilder(favouritesDataSourceFactory, config).build()
+        list = LivePagedListBuilder(PhotoDataSourceFactory(), config).build()
+        photoPagedList = LivePagedListBuilder(PhotoDataSourceFactory(), config).build()
+        searchPagedList = LivePagedListBuilder(SearchDataSourceFactory(""), config).build()
+        collectionsPagedList = LivePagedListBuilder(CollectionDataSourceFactory(), config).build()
+        favouritesPagedList = LivePagedListBuilder(FavouritesDataSourceFactory(), config).build()
 
         val my = MyLikeChangerObject("a", false, -1)
         photoLikeChangerObject = MutableLiveData()
@@ -84,13 +80,22 @@ class PhotoViewModel : ViewModel() {
     }
 
     fun setQuery(query: String) {
-        val searchDataSourceFactory = SearchDataSourceFactory(query)
-        searchPagedList = LivePagedListBuilder(searchDataSourceFactory, config).build()
+        if (query != "") {
+            searchPagedList = LivePagedListBuilder(SearchDataSourceFactory(query), config).build()
+        }
     }
 
     fun setIdCollection(id: String) {
         val collectionPhotosDataSourceFactory = CollectionPhotosDataSourceFactory(id)
         collectionPhotosPagedList =
             LivePagedListBuilder(collectionPhotosDataSourceFactory, config).build()
+    }
+
+    fun getList(query: String) {
+        list.value?.dataSource?.invalidate()
+        list = LivePagedListBuilder(
+            if (query != "") SearchDataSourceFactory(query) else PhotoDataSourceFactory(),
+            config
+        ).build()
     }
 }

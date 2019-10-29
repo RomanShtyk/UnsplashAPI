@@ -41,7 +41,7 @@ class SearchDataSource internal constructor(private val query: String) : PageKey
     }
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Photo>) {
-        unsplashAPI.searchPhotos(query, FIRST_PAGE).enqueue(object : Callback<SearchResults> {
+        unsplashAPI.searchPhotos(query, params.key).enqueue(object : Callback<SearchResults> {
             override fun onResponse(call: Call<SearchResults>, response: Response<SearchResults>) {
                 if (response.body() != null) {
                     val key = params.key + 1

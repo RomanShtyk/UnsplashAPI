@@ -21,4 +21,5 @@
     <string name="favourites">Favourites</string>
     <string name="more">more</string>
     <string name="logout">Logout</string>
+    <string name="no_matches">No matches</string>
 </resources>
