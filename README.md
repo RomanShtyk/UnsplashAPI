@@ -1,5 +1,8 @@
 # Android pagination with animations sample
-Example of pagination, shared elements, api calls etc..
+Example of pagination, shared elements, MVVM, LiveData, Retrofit api calls, 
+custom naigation with saving state of fragment, glide usage, etc..
+
+![](flow.gif)
 
 ## Getting Started
 
