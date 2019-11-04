@@ -24,19 +24,20 @@
             android:orientation="horizontal"
             tools:layout_editor_absoluteX="16dp">
 
-            <SearchView
+            <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:foregroundTint="@color/colorYellow"
+                android:focusable="true"
                 android:maxWidth="300dp"
-                android:searchIcon="@drawable/baseline_search_24"
+                app:queryHint="Search.."
+                app:searchHintIcon="@drawable/none_24dp"
+                app:iconTint="@color/colorYellow"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/favourite"
-                app:layout_constraintTop_toTopOf="parent">
-
-            </SearchView>
+                app:layout_constraintTop_toTopOf="parent"
+                app:searchIcon="@drawable/baseline_search_24"/>
 
             <ImageView
                 android:id="@+id/favourite"
@@ -104,7 +105,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

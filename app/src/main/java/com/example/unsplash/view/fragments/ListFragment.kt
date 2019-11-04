@@ -1,5 +1,6 @@
 package com.example.unsplash.view.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,21 +22,25 @@ import com.example.unsplash.view.MainActivity
 import com.example.unsplash.view.adapters.MyPagedListAdapter
 import com.example.unsplash.viewmodel.PhotoViewModel
 import kotlinx.android.synthetic.main.fragment_list.*
+import android.app.Activity
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.Intent
+
 
 class ListFragment : Fragment() {
     private lateinit var mAdapter: MyPagedListAdapter
-    private lateinit var photoViewModel: PhotoViewModel
+    private val photoViewModel: PhotoViewModel by lazy {
+        ViewModelProvider(this).get(PhotoViewModel::class.java)
+    }
     private var isSearching = false
     private val observer = Observer<PagedList<Photo>> { mAdapter.submitList(it) }
 
     private fun refreshList() {
-      //  photoViewModel.photoPagedList.value?.dataSource?.invalidate()
         photoViewModel.list.value?.dataSource?.invalidate()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        photoViewModel = ViewModelProvider(this).get(PhotoViewModel::class.java)
         exitTransition =
             TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
                 .setDuration(100)
@@ -61,8 +66,6 @@ class ListFragment : Fragment() {
 
     private fun addObservers() {
         photoViewModel.list.observe(this, observer)
-//        photoViewModel.searchPagedList.observe(this, observer)
-//        photoViewModel.photoPagedList.observe(this, observer)
         photoViewModel.photoLikeChangerObject.observe(this, Observer {
             if (it != null) {
                 if (it.position != -1) {
@@ -94,6 +97,7 @@ class ListFragment : Fragment() {
     }
 
     private fun viewInit() {
+        (activity as MainActivity).showFab()
         list_rv.layoutManager = GridLayoutManager(requireContext(), 2)
         list_rv.adapter = mAdapter
         list_rv.setEmptyView(empty)
@@ -140,13 +144,18 @@ class ListFragment : Fragment() {
             })
 
             setOnCloseListener {
-                isSearching = false
-                searchView.onActionViewCollapsed()
-                photoViewModel.list.removeObservers(this@ListFragment)
-                photoViewModel.getList("")
-                photoViewModel.list.observe(this@ListFragment, observer)
-                refreshList()
-                true
+                if (isSearching) {
+                    isSearching = false
+                    searchView.onActionViewCollapsed()
+                    photoViewModel.list.removeObservers(this@ListFragment)
+                    photoViewModel.getList("")
+                    photoViewModel.list.observe(this@ListFragment, observer)
+                    refreshList()
+                    true
+                } else {
+                    searchView.onActionViewCollapsed()
+                    true
+                }
             }
         }
 
@@ -159,7 +168,18 @@ class ListFragment : Fragment() {
                 setOnMenuItemClickListener { item ->
                     when (item.itemId) {
                         R.id.item_logout -> {
-                            //TODO logout func
+                            // startActivity((activity as MainActivity).intent)
+                            //  (activity as MainActivity).finish()
+                            val intent = Intent(context, MainActivity::class.java)
+                            intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+                            requireContext().startActivity(intent)
+                            if (context is Activity) {
+                                (activity as MainActivity).applicationContext.getSharedPreferences(
+                                    "ACCESS_TOKEN",
+                                    Context.MODE_PRIVATE
+                                ).edit().clear().apply()
+                                (context as Activity).finish()
+                            }
                             true
                         }
                         else -> true
