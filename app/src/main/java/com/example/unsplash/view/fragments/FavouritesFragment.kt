@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.doOnPreDraw
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -16,12 +15,18 @@ import com.example.unsplash.model.models.Photo
 import com.example.unsplash.view.MainActivity
 import com.example.unsplash.view.adapters.MyPagedListAdapter
 import com.example.unsplash.viewmodel.PhotoViewModel
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_favourites.*
+import javax.inject.Inject
 
-class FavouritesFragment : Fragment() {
+class FavouritesFragment : DaggerFragment() {
     private lateinit var mAdapter: MyPagedListAdapter
     private val numberOfColumns = 2
-    private lateinit var photoViewModel: PhotoViewModel
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val photoViewModel: PhotoViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[PhotoViewModel::class.java]
+    }
 
     private fun refreshList() {
         photoViewModel.favouritesPagedList.value?.dataSource?.invalidate()
@@ -30,8 +35,6 @@ class FavouritesFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity as MainActivity).hideNavBar()
-        photoViewModel =
-            ViewModelProvider((activity as MainActivity)).get(PhotoViewModel::class.java)
         exitTransition =
             TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
                 .setDuration(100)
@@ -52,8 +55,10 @@ class FavouritesFragment : Fragment() {
     }
 
     private fun addObservers() {
-        photoViewModel.favouritesPagedList.observe(this, Observer { mAdapter.submitList(it) })
-        photoViewModel.photoLikeChangerObject.observe(this, Observer {
+        photoViewModel.favouritesPagedList.observe(
+            viewLifecycleOwner,
+            Observer { mAdapter.submitList(it) })
+        photoViewModel.photoLikeChangerObject.observe(viewLifecycleOwner, Observer {
             assert(it != null)
             if (it != null) {
                 if (it.position != -1) {

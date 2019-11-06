@@ -8,4 +8,6 @@ object Const {
     val MAIN_FOLDER =
         getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).path + MAIN_FOLDER_NAME
     const val WRITE_EXTERNAL_PERMISSION_CODE = 1
+
+    const val UNSPLASH_LOGIN_CALLBACK = "unsplash-auth-callback"
 }

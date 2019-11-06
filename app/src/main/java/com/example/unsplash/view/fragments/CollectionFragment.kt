@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,16 +12,20 @@ import com.example.unsplash.model.models.ColletionPhotos
 import com.example.unsplash.view.MainActivity
 import com.example.unsplash.view.adapters.MyPagedListOneViewAdapter
 import com.example.unsplash.viewmodel.PhotoViewModel
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_collection.*
+import javax.inject.Inject
 
-class CollectionFragment : Fragment() {
-    private lateinit var photoViewModel: PhotoViewModel
+class CollectionFragment : DaggerFragment() {
     private lateinit var mAdapter: MyPagedListOneViewAdapter
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val photoViewModel: PhotoViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[PhotoViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        photoViewModel =
-            ViewModelProvider((activity as MainActivity)).get(PhotoViewModel::class.java)
         exitTransition =
             androidx.transition.TransitionInflater.from(context)
                 .inflateTransition(android.R.transition.fade)
@@ -42,7 +45,7 @@ class CollectionFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_collection, container, false)
         photoViewModel.collectionsPagedList.observe(
-            this@CollectionFragment,
+            viewLifecycleOwner,
             Observer { mAdapter.submitList(it) })
         return view
     }

@@ -6,7 +6,8 @@ import androidx.paging.PageKeyedDataSource
 import com.example.unsplash.model.models.ColletionPhotos
 
 class CollectionDataSourceFactory : DataSource.Factory<Int, ColletionPhotos>() {
-    private val collectionLiveDataSource = MutableLiveData<PageKeyedDataSource<Int, ColletionPhotos>>()
+    private val collectionLiveDataSource =
+        MutableLiveData<PageKeyedDataSource<Int, ColletionPhotos>>()
 
     override fun create(): DataSource<Int, ColletionPhotos> {
         val collectionDataSource = CollectionDataSource()

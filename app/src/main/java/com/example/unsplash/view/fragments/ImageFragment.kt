@@ -9,7 +9,6 @@ import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.transition.TransitionInflater
 import com.bumptech.glide.Glide
@@ -24,25 +23,31 @@ import com.example.unsplash.util.Const.MAIN_FOLDER
 import com.example.unsplash.util.Const.MAIN_FOLDER_NAME
 import com.example.unsplash.view.MainActivity
 import com.example.unsplash.viewmodel.PhotoViewModel
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_image.*
 import org.jetbrains.anko.toast
 import java.io.File
+import javax.inject.Inject
 
 
-class ImageFragment : Fragment() {
+class ImageFragment : DaggerFragment() {
     private lateinit var uri: String
     private lateinit var rawUri: String
     private var likes: Int = 0
     private lateinit var photoId: String
     private var position: Int = 0
     private var isLiked: Boolean = false
-    private lateinit var photoViewModel: PhotoViewModel
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val photoViewModel: PhotoViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[PhotoViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity as MainActivity).hideNavBar()
-        photoViewModel =
-            ViewModelProvider((activity as MainActivity)).get(PhotoViewModel::class.java)
+
         sharedElementEnterTransition =
             TransitionInflater.from(context).inflateTransition(R.transition.default_transition)
         exitTransition =

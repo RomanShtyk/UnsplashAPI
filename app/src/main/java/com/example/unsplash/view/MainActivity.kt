@@ -1,17 +1,16 @@
 package com.example.unsplash.view
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.view.View.*
 import android.view.animation.TranslateAnimation
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.unsplash.R
@@ -24,6 +23,7 @@ import com.example.unsplash.util.Const.WRITE_EXTERNAL_PERMISSION_CODE
 import com.example.unsplash.view.fragments.CollectionFragment
 import com.example.unsplash.view.fragments.ListFragment
 import com.example.unsplash.view.fragments.StartPointFragment
+import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.main_activity.*
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -31,21 +31,42 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
+import androidx.biometric.BiometricPrompt
+import com.example.unsplash.util.Const
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
-class MainActivity : AppCompatActivity() {
-    private lateinit var sp: SharedPreferences
+
+class MainActivity : DaggerAppCompatActivity() {
+    @Inject
+    lateinit var sp: SharedPreferences
     private val listFragment = ListFragment()
     private val collectionFragment = CollectionFragment()
     private var active: Fragment = listFragment
     private val fm = supportFragmentManager
+    private var newExecutor: ExecutorService = Executors.newSingleThreadExecutor()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-        sp = applicationContext.getSharedPreferences("ACCESS_TOKEN", Context.MODE_PRIVATE)
         token = sp.getString("TOKEN", "").toString()
         username = sp.getString("USERNAME", "").toString()
         checkPermissions()
+//        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+//            .setTitle("Set the title to display.")
+//            .setSubtitle("Set the subtitle to display.")
+//            .setDescription("Set the description to display")
+//            .setNegativeButtonText("Negative Button")
+//            .build()
+//        val biometricPrompt =
+//            BiometricPrompt(this, newExecutor, object : BiometricPrompt.AuthenticationCallback() {
+//                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+//                    super.onAuthenticationSucceeded(result)
+//                    checkPermissions()
+//                }
+//            })
+//        biometricPrompt.authenticate(promptInfo)
     }
 
 
@@ -210,6 +231,13 @@ class MainActivity : AppCompatActivity() {
             animate.fillAfter = show
             navigationView?.startAnimation(animate)
             if (!show) navigationView.visibility = INVISIBLE
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent?.data != null && TextUtils.isEmpty(intent.data?.authority) && Const.UNSPLASH_LOGIN_CALLBACK == intent.data?.authority) {
+            logIn()
         }
     }
 

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -16,19 +15,23 @@ import com.example.unsplash.model.models.Photo
 import com.example.unsplash.view.MainActivity
 import com.example.unsplash.view.adapters.MyPagedListAdapter
 import com.example.unsplash.viewmodel.PhotoViewModel
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_collection_photos.*
+import javax.inject.Inject
 
-class CollectionPhotosFragment : Fragment() {
+class CollectionPhotosFragment : DaggerFragment() {
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val photoViewModel: PhotoViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[PhotoViewModel::class.java]
+    }
     private lateinit var mAdapter: MyPagedListAdapter
-    private lateinit var photoViewModel: PhotoViewModel
     private lateinit var collectionId: String
     private lateinit var collectionName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        photoViewModel =
-            ViewModelProvider((activity as MainActivity)).get(PhotoViewModel::class.java)
         collectionId = arguments!!.getString("id").toString()
         collectionName = arguments!!.getString("name").toString()
         photoViewModel.setIdCollection(collectionId)
@@ -55,7 +58,7 @@ class CollectionPhotosFragment : Fragment() {
         assert(arguments != null)
         photoViewModel.collectionPhotosPagedList
             .observe(
-                this,
+                viewLifecycleOwner,
                 Observer { mAdapter.submitList(it) })
     }
 

@@ -1,9 +1,9 @@
 package com.example.unsplash.viewmodel
 
-import androidx.lifecycle.ViewModel
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.example.unsplash.model.datasource.*
@@ -14,12 +14,12 @@ import com.example.unsplash.model.models.Photo
 import com.example.unsplash.model.unsplash.Unsplash
 import com.example.unsplash.model.unsplash.UnsplashAPI
 import com.example.unsplash.view.MainActivity.Companion.token
-import com.example.unsplash.view.fragments.ListFragment
 import retrofit2.Call
 import retrofit2.Response
+import javax.inject.Inject
 
 
-class PhotoViewModel : ViewModel() {
+class PhotoViewModel @Inject constructor() : ViewModel() {
     var list: LiveData<PagedList<Photo>>
     var photoPagedList: LiveData<PagedList<Photo>>
     var favouritesPagedList: LiveData<PagedList<Photo>>

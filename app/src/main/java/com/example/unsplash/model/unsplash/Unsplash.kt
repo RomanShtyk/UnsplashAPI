@@ -14,21 +14,21 @@ object Unsplash {
 
     fun getRetrofitInstance(clientId: String): Retrofit {
         val client = OkHttpClient.Builder()
-                .addInterceptor(HeaderInterceptor(clientId)).build()
+            .addInterceptor(HeaderInterceptor(clientId)).build()
         return Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+            .baseUrl(BASE_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
 
     fun getRetrofitPostInstance(token: String): Retrofit {
         val client = OkHttpClient.Builder()
-                .addInterceptor(HeaderInterceptorPost(token)).build()
+            .addInterceptor(HeaderInterceptorPost(token)).build()
         return Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+            .baseUrl(BASE_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
 }

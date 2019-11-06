@@ -9,11 +9,16 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SearchDataSource internal constructor(private val query: String) : PageKeyedDataSource<Int, Photo>() {
+class SearchDataSource internal constructor(private val query: String) :
+    PageKeyedDataSource<Int, Photo>() {
     private val CLIENT_ID = "32ae08ce9a09a12cec94bc4ed85e1a5a01a8c3d2e83c103160e9ac8c36c3081d"
-    private val unsplashAPI = Unsplash.getRetrofitInstance(CLIENT_ID).create(UnsplashAPI::class.java)
+    private val unsplashAPI =
+        Unsplash.getRetrofitInstance(CLIENT_ID).create(UnsplashAPI::class.java)
 
-    override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Photo>) {
+    override fun loadInitial(
+        params: LoadInitialParams<Int>,
+        callback: LoadInitialCallback<Int, Photo>
+    ) {
         unsplashAPI.searchPhotos(query, FIRST_PAGE).enqueue(object : Callback<SearchResults> {
             override fun onResponse(call: Call<SearchResults>, response: Response<SearchResults>) {
                 if (response.body() != null) {

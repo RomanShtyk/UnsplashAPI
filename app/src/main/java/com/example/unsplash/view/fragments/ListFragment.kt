@@ -1,6 +1,8 @@
 package com.example.unsplash.view.fragments
 
-import android.content.Context
+import android.app.Activity
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,10 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.doOnPreDraw
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.PagedList
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.transition.TransitionInflater
 import com.example.unsplash.R
@@ -21,16 +23,17 @@ import com.example.unsplash.model.models.Photo
 import com.example.unsplash.view.MainActivity
 import com.example.unsplash.view.adapters.MyPagedListAdapter
 import com.example.unsplash.viewmodel.PhotoViewModel
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_list.*
-import android.app.Activity
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.content.Intent
+import javax.inject.Inject
 
 
-class ListFragment : Fragment() {
+class ListFragment : DaggerFragment() {
     private lateinit var mAdapter: MyPagedListAdapter
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
     private val photoViewModel: PhotoViewModel by lazy {
-        ViewModelProvider(this).get(PhotoViewModel::class.java)
+        ViewModelProvider(this, viewModelFactory)[PhotoViewModel::class.java]
     }
     private var isSearching = false
     private val observer = Observer<PagedList<Photo>> { mAdapter.submitList(it) }
@@ -133,7 +136,7 @@ class ListFragment : Fragment() {
                     query?.let { photoViewModel.setQuery(it) }
                     photoViewModel.list.removeObservers(this@ListFragment)
                     query?.let { photoViewModel.getList(it) }
-                    photoViewModel.list.observe(this@ListFragment, observer)
+                    photoViewModel.list.observe(viewLifecycleOwner, observer)
                     return false
                 }
 
@@ -149,7 +152,7 @@ class ListFragment : Fragment() {
                     searchView.onActionViewCollapsed()
                     photoViewModel.list.removeObservers(this@ListFragment)
                     photoViewModel.getList("")
-                    photoViewModel.list.observe(this@ListFragment, observer)
+                    photoViewModel.list.observe(viewLifecycleOwner, observer)
                     refreshList()
                     true
                 } else {
@@ -168,16 +171,14 @@ class ListFragment : Fragment() {
                 setOnMenuItemClickListener { item ->
                     when (item.itemId) {
                         R.id.item_logout -> {
-                            // startActivity((activity as MainActivity).intent)
-                            //  (activity as MainActivity).finish()
+//                             startActivity((activity as MainActivity).intent)
+//                            (activity as MainActivity).finish()
                             val intent = Intent(context, MainActivity::class.java)
                             intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
                             requireContext().startActivity(intent)
                             if (context is Activity) {
-                                (activity as MainActivity).applicationContext.getSharedPreferences(
-                                    "ACCESS_TOKEN",
-                                    Context.MODE_PRIVATE
-                                ).edit().clear().apply()
+                                PreferenceManager.getDefaultSharedPreferences((activity as MainActivity).application)
+                                    .edit().clear().apply()
                                 (context as Activity).finish()
                             }
                             true
