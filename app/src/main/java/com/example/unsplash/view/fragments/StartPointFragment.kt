@@ -37,7 +37,7 @@ class StartPointFragment : DaggerFragment() {
         }
     }
 
-    private fun launchTab(context: Context, uri: Uri){
+    private fun launchTab(context: Context, uri: Uri) {
         val connection = object : CustomTabsServiceConnection() {
             override fun onCustomTabsServiceConnected(
                 componentName: ComponentName,
