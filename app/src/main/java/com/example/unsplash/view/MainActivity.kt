@@ -1,17 +1,18 @@
 package com.example.unsplash.view
 
-import android.Manifest
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import android.util.Log
 import android.view.View.*
 import android.view.animation.TranslateAnimation
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
 import androidx.fragment.app.Fragment
 import com.example.unsplash.R
 import com.example.unsplash.model.models.AccessToken
@@ -19,7 +20,7 @@ import com.example.unsplash.model.models.Me
 import com.example.unsplash.model.unsplash.HeaderInterceptor
 import com.example.unsplash.model.unsplash.Unsplash
 import com.example.unsplash.model.unsplash.UnsplashAPI
-import com.example.unsplash.util.Const.WRITE_EXTERNAL_PERMISSION_CODE
+import com.example.unsplash.util.Const
 import com.example.unsplash.view.fragments.CollectionFragment
 import com.example.unsplash.view.fragments.ListFragment
 import com.example.unsplash.view.fragments.StartPointFragment
@@ -31,11 +32,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.Executor
 import javax.inject.Inject
-import androidx.biometric.BiometricPrompt
-import com.example.unsplash.util.Const
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 
 class MainActivity : DaggerAppCompatActivity() {
@@ -45,64 +43,82 @@ class MainActivity : DaggerAppCompatActivity() {
     private val collectionFragment = CollectionFragment()
     private var active: Fragment = listFragment
     private val fm = supportFragmentManager
-    private var newExecutor: ExecutorService = Executors.newSingleThreadExecutor()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
         token = sp.getString("TOKEN", "").toString()
         username = sp.getString("USERNAME", "").toString()
-        checkPermissions()
-//        val promptInfo = BiometricPrompt.PromptInfo.Builder()
-//            .setTitle("Set the title to display.")
-//            .setSubtitle("Set the subtitle to display.")
-//            .setDescription("Set the description to display")
-//            .setNegativeButtonText("Negative Button")
-//            .build()
-//        val biometricPrompt =
-//            BiometricPrompt(this, newExecutor, object : BiometricPrompt.AuthenticationCallback() {
-//                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-//                    super.onAuthenticationSucceeded(result)
-//                    checkPermissions()
-//                }
-//            })
-//        biometricPrompt.authenticate(promptInfo)
+
+        val biometricManager = BiometricManager.from(this)
+        if (biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
+
+            val promptInfo = BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Set the title to display.")
+                .setSubtitle("Set the subtitle to display.")
+                .setDescription("Set the description to display")
+                //.setNegativeButtonText("Cancel")
+                .setDeviceCredentialAllowed(true)
+                .build()
+            val biometricPrompt =
+                BiometricPrompt(
+                    this,
+                    getMainThreadExecutor(),
+                    object : BiometricPrompt.AuthenticationCallback() {
+                        override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                            super.onAuthenticationSucceeded(result)
+                            checkPermissions()
+                        }
+
+                        override fun onAuthenticationError(
+                            errorCode: Int,
+                            errString: CharSequence
+                        ) {
+                            super.onAuthenticationError(errorCode, errString)
+                            finish()
+                        }
+
+                    })
+            biometricPrompt.authenticate(promptInfo)
+        } else {
+            checkPermissions()
+        }
+    }
+
+    private fun getMainThreadExecutor(): MainThreadExecutor {
+        return MainThreadExecutor()
+    }
+
+    private class MainThreadExecutor : Executor {
+        private val handler = Handler(Looper.getMainLooper())
+
+        override fun execute(r: Runnable) {
+            handler.post(r)
+        }
     }
 
 
     private fun checkPermissions() {
-        when {
-            ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED -> ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                WRITE_EXTERNAL_PERMISSION_CODE
-            )
-            else -> {
-                if (intent.data != null) {
-                    logIn()
-                } else {
-                    viewInit()
-                }
-            }
+        if (intent.data != null) {
+            logIn()
+        } else {
+            viewInit()
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-            checkPermissions()
-        } else if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_DENIED)) {
-            checkPermissions()
-        }
-        return
-
-    }
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<out String>,
+//        grantResults: IntArray
+//    ) {
+//        if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+//            checkPermissions()
+//        } else if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_DENIED)) {
+//            checkPermissions()
+//        }
+//        return
+//
+//    }
 
     private fun logIn() {
         val uri = intent.data

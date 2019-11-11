@@ -25,8 +25,8 @@
             </intent-filter>
             <intent-filter>
                 <data
-                    android:host="myclient"
-                    android:scheme="https" />
+                    android:host="my"
+                    android:scheme="myapp" />
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />

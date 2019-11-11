@@ -1,7 +1,9 @@
 package com.example.unsplash.view.fragments
 
+import android.Manifest
 import android.app.DownloadManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -9,6 +11,7 @@ import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.transition.TransitionInflater
 import com.bumptech.glide.Glide
@@ -19,6 +22,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.unsplash.R
 import com.example.unsplash.model.models.MyLikeChangerObject
+import com.example.unsplash.util.Const
 import com.example.unsplash.util.Const.MAIN_FOLDER
 import com.example.unsplash.util.Const.MAIN_FOLDER_NAME
 import com.example.unsplash.view.MainActivity
@@ -137,27 +141,55 @@ class ImageFragment : DaggerFragment() {
             }).into(bigImage)
     }
 
-    private fun downloadPhoto(url: String, name: String) {
-
-        val direct = File("$MAIN_FOLDER/$name")
-
-        if (!direct.exists()) {
-            direct.mkdir()
-            val dm = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            val downloadUri = Uri.parse(url)
-            val request = DownloadManager.Request(downloadUri)
-            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                .setAllowedOverRoaming(false)
-                .setTitle(name)
-                .setMimeType("image/jpeg")
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                .setDestinationInExternalPublicDir(
-                    Environment.DIRECTORY_PICTURES,
-                    File.separator + MAIN_FOLDER_NAME + File.separator + name
+    private fun checkPermissions(): Boolean {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            activity?.let {
+                ActivityCompat.requestPermissions(
+                    it,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    Const.WRITE_EXTERNAL_PERMISSION_CODE
                 )
-            dm.enqueue(request)
+            }
+            return false
         } else {
-            activity?.toast("Already downloaded")
+            return true
         }
     }
+
+    private fun downloadPhoto(url: String, name: String) {
+        if (checkPermissions()) {
+            val direct = File("$MAIN_FOLDER/$name")
+            if (!direct.exists()) {
+                direct.mkdir()
+                val dm =
+                    requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                val downloadUri = Uri.parse(url)
+                val request = DownloadManager.Request(downloadUri)
+                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                    .setAllowedOverRoaming(false)
+                    .setTitle(name)
+                    .setMimeType("image/jpeg")
+                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                    .setDestinationInExternalPublicDir(
+                        Environment.DIRECTORY_PICTURES,
+                        File.separator + MAIN_FOLDER_NAME + File.separator + name
+                    )
+                dm.enqueue(request)
+            } else {
+                activity?.toast("Already downloaded")
+            }
+        }
+    }
+
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<out String>,
+//        grantResults: IntArray
+//    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//    }
 }

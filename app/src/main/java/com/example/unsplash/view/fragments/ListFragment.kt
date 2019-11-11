@@ -164,15 +164,11 @@ class ListFragment : DaggerFragment() {
 
         morePopup.setOnClickListener {
             val popup = PopupMenu(requireContext(), it)
-            //Inflating the Popup using xml file
             popup.apply {
                 menuInflater.inflate(R.menu.more_menu_popup, popup.menu)
-                //registering popup with OnMenuItemClickListener
                 setOnMenuItemClickListener { item ->
                     when (item.itemId) {
                         R.id.item_logout -> {
-//                             startActivity((activity as MainActivity).intent)
-//                            (activity as MainActivity).finish()
                             val intent = Intent(context, MainActivity::class.java)
                             intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
                             requireContext().startActivity(intent)
@@ -186,7 +182,7 @@ class ListFragment : DaggerFragment() {
                         else -> true
                     }
                 }
-                show()//showing popup menu
+                show()
             }
         }
     }
