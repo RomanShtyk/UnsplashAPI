@@ -13,7 +13,7 @@ import retrofit2.Response
 class PhotoDataSource : PageKeyedDataSource<Int, Photo>() {
     private val CLIENT_ID = "32ae08ce9a09a12cec94bc4ed85e1a5a01a8c3d2e83c103160e9ac8c36c3081d"
     private val unsplashAPI =
-        Unsplash.getRetrofitPostInstance(token).create(UnsplashAPI::class.java)
+        Unsplash.getRetrofitTokenedAPIInstance(token)
 
     override fun loadInitial(
         params: LoadInitialParams<Int>,

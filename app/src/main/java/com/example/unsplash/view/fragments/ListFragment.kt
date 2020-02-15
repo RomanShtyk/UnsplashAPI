@@ -46,10 +46,10 @@ class ListFragment : DaggerFragment() {
         super.onCreate(savedInstanceState)
         exitTransition =
             TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
-                .setDuration(100)
+                .setDuration(300)
         enterTransition =
             TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
-                .setDuration(100)
+                .setDuration(300)
         addObservers()
         mAdapter = MyPagedListAdapter(
             requireContext(),

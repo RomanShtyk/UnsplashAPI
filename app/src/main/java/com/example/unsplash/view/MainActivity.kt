@@ -6,32 +6,25 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.TextUtils
-import android.util.Log
+import android.view.View
 import android.view.View.*
-import android.view.animation.TranslateAnimation
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.unsplash.R
-import com.example.unsplash.model.models.AccessToken
-import com.example.unsplash.model.models.Me
-import com.example.unsplash.model.unsplash.HeaderInterceptor
 import com.example.unsplash.model.unsplash.Unsplash
-import com.example.unsplash.model.unsplash.UnsplashAPI
-import com.example.unsplash.util.Const
 import com.example.unsplash.view.fragments.CollectionFragment
 import com.example.unsplash.view.fragments.ListFragment
 import com.example.unsplash.view.fragments.StartPointFragment
+import com.example.unsplash.viewmodel.PhotoViewModel
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.main_activity.*
-import okhttp3.OkHttpClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.Executor
 import javax.inject.Inject
 
@@ -43,45 +36,21 @@ class MainActivity : DaggerAppCompatActivity() {
     private val collectionFragment = CollectionFragment()
     private var active: Fragment = listFragment
     private val fm = supportFragmentManager
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val photoViewModel: PhotoViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[PhotoViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
         token = sp.getString("TOKEN", "").toString()
         username = sp.getString("USERNAME", "").toString()
-
-        val biometricManager = BiometricManager.from(this)
-        if (biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
-
-            val promptInfo = BiometricPrompt.PromptInfo.Builder()
-                .setTitle("Set the title to display.")
-                .setSubtitle("Set the subtitle to display.")
-                .setDescription("Set the description to display")
-                //.setNegativeButtonText("Cancel")
-                .setDeviceCredentialAllowed(true)
-                .build()
-            val biometricPrompt =
-                BiometricPrompt(
-                    this,
-                    getMainThreadExecutor(),
-                    object : BiometricPrompt.AuthenticationCallback() {
-                        override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                            super.onAuthenticationSucceeded(result)
-                            checkPermissions()
-                        }
-
-                        override fun onAuthenticationError(
-                            errorCode: Int,
-                            errString: CharSequence
-                        ) {
-                            super.onAuthenticationError(errorCode, errString)
-                            finish()
-                        }
-
-                    })
-            biometricPrompt.authenticate(promptInfo)
+        if (intent.data != null) {
+            logIn()
         } else {
-            checkPermissions()
+            startInit()
         }
     }
 
@@ -97,82 +66,53 @@ class MainActivity : DaggerAppCompatActivity() {
         }
     }
 
+    private fun logIn() {
+        val uri = intent.data
+        val code: String = uri?.getQueryParameter("code").toString()
+        photoViewModel.getAccessToken(code)
+        startInit()
+    }
 
-    private fun checkPermissions() {
-        if (intent.data != null) {
-            logIn()
+    private fun startInit() {
+        val biometricManager = BiometricManager.from(this)
+        if (biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
+            //TODO show this on oneplus 6t
+            val promptInfo = BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Log in using your biometric credential")
+                .setSubtitle("Or just use your PIN")
+                .setDescription("Set the description to display")
+                //.setNegativeButtonText("Cancel")
+                .setDeviceCredentialAllowed(true)
+                .build()
+            val biometricPrompt =
+                BiometricPrompt(
+                    this,
+                    getMainThreadExecutor(),
+                    object : BiometricPrompt.AuthenticationCallback() {
+                        override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                            super.onAuthenticationSucceeded(result)
+                            viewInit()
+                        }
+
+                        override fun onAuthenticationError(
+                            errorCode: Int,
+                            errString: CharSequence
+                        ) {
+                            super.onAuthenticationError(errorCode, errString)
+                            Toast.makeText(applicationContext, "Authentication failed",
+                                Toast.LENGTH_SHORT)
+                                .show()
+                        }
+
+                    })
+            biometricPrompt.authenticate(promptInfo)
         } else {
             viewInit()
         }
     }
 
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<out String>,
-//        grantResults: IntArray
-//    ) {
-//        if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-//            checkPermissions()
-//        } else if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_DENIED)) {
-//            checkPermissions()
-//        }
-//        return
-//
-//    }
-
-    private fun logIn() {
-        val uri = intent.data
-        val code: String = uri?.getQueryParameter("code").toString()
-        val client = OkHttpClient.Builder()
-            .addInterceptor(HeaderInterceptor(Unsplash.CLIENT_ID)).build()
-        val retrofit = Retrofit.Builder()
-            .baseUrl(Unsplash.BASE_URL_POST)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val unsplashAPI = retrofit.create(UnsplashAPI::class.java)
-
-        val call = unsplashAPI.getAccessToken(
-            Unsplash.CLIENT_ID,
-            Unsplash.SECRET,
-            Unsplash.REDIRECT_URI,
-            code,
-            "authorization_code"
-        )
-        call.enqueue(object : Callback<AccessToken> {
-            override fun onResponse(call: Call<AccessToken>, response: Response<AccessToken>) {
-                if (response.isSuccessful) {
-                    val editor = sp.edit()
-                    editor.putString("TOKEN", response.body()?.accessToken)
-                    token = response.body()?.accessToken.toString()
-                    editor.apply()
-                    val unsplashAPITokened =
-                        Unsplash.getRetrofitPostInstance(token).create(UnsplashAPI::class.java)
-                    val callMe = unsplashAPITokened.meProfile
-                    callMe.enqueue(object : Callback<Me> {
-                        override fun onResponse(call: Call<Me>, response: Response<Me>) {
-                            editor.putString("USERNAME", response.body()?.username)
-                            editor.apply()
-                            viewInit()
-                        }
-
-                        override fun onFailure(call: Call<Me>, t: Throwable) {
-                            Log.d("mLog", "ME onFailure: check retrofit base url, try another")
-                        }
-                    })
-
-                    animateNavigationBar(true)
-                    showFab()
-                }
-            }
-
-            override fun onFailure(call: Call<AccessToken>, t: Throwable) {
-                Log.d("mLog", "onFailure: ")
-            }
-        })
-    }
-
     private fun viewInit() {
+        //TODO refactor this
         fab.setOnClickListener {
             try {
                 val uri = Uri.parse(Unsplash.UNSPLASH_UPLOAD_URL)
@@ -208,12 +148,13 @@ class MainActivity : DaggerAppCompatActivity() {
         navigationView.setOnNavigationItemReselectedListener { /*need this*/ }
         if (token != "") {
             fm.beginTransaction().add(R.id.container, collectionFragment, "2")
-                .hide(collectionFragment).commit()
-            fm.beginTransaction().add(R.id.container, listFragment, "1")
-                .commit()
+                .hide(collectionFragment).add(R.id.container, listFragment, "1")
+                .commitAllowingStateLoss()//need this because of  exceptions
+            animateNavigationBar(true)
             showFab()
         } else {
-            fm.beginTransaction().add(R.id.container, StartPointFragment(), "4").commit()
+            fm.beginTransaction().add(R.id.container, StartPointFragment(), "4")
+                .commitAllowingStateLoss()//need this because of  exceptions
         }
     }
 
@@ -236,27 +177,24 @@ class MainActivity : DaggerAppCompatActivity() {
 
     private fun animateNavigationBar(show: Boolean) {
         if (navigationView.visibility == VISIBLE && !show || navigationView.visibility != VISIBLE && show) {
-            if (show) navigationView.visibility = VISIBLE
-            val animate = TranslateAnimation(
-                0f,
-                0f,
-                if (show) navigationView?.height?.toFloat() ?: 0f else 0f,
-                if (show) 0f else navigationView?.height?.toFloat() ?: 0f
-            )
-            animate.duration = 170
-            animate.fillAfter = show
-            navigationView?.startAnimation(animate)
-            if (!show) navigationView.visibility = INVISIBLE
+//            if (show) navigationView.visibility = VISIBLE
+//            val animate = TranslateAnimation(
+//                0f,
+//                0f,
+//                if (show) navigationView?.height?.toFloat() ?: 0f else 0f,
+//                if (show) 0f else navigationView?.height?.toFloat() ?: 0f
+//            )
+//            animate.duration = 170
+//            animate.fillAfter = show
+//            navigationView?.startAnimation(animate)
+//            if (!show) navigationView.visibility = INVISIBLE
+            if (show) {
+                fadeInAnimation(navigationView)
+            } else {
+                fadeOutAnimation(navigationView)
+            }
         }
     }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        if (intent?.data != null && TextUtils.isEmpty(intent.data?.authority) && Const.UNSPLASH_LOGIN_CALLBACK == intent.data?.authority) {
-            logIn()
-        }
-    }
-
 
     private fun oneStepBack() {
         val fts = supportFragmentManager.beginTransaction()
@@ -267,6 +205,37 @@ class MainActivity : DaggerAppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    private fun fadeInAnimation(view: View) {
+        val fadeIn: Animation = AlphaAnimation(0F, 1F)
+        fadeIn.interpolator = DecelerateInterpolator()
+        fadeIn.duration = 170L
+        fadeIn.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {
+                view.visibility = VISIBLE
+            }
+
+            override fun onAnimationRepeat(animation: Animation) {}
+        })
+        view.startAnimation(fadeIn)
+    }
+
+    private fun fadeOutAnimation(view: View) {
+        val fadeOut: Animation = AlphaAnimation(1F, 0F)
+        fadeOut.interpolator = AccelerateInterpolator()
+        fadeOut.startOffset = 170L
+        fadeOut.duration = 170L
+        fadeOut.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {
+                view.visibility = INVISIBLE
+            }
+
+            override fun onAnimationRepeat(animation: Animation) {}
+        })
+        view.startAnimation(fadeOut)
     }
 
     override fun onBackPressed() {
