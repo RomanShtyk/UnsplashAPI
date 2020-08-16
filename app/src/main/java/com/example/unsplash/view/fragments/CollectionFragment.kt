@@ -18,11 +18,10 @@ import javax.inject.Inject
 
 class CollectionFragment : DaggerFragment() {
     private lateinit var mAdapter: MyPagedListOneViewAdapter
+
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val photoViewModel: PhotoViewModel by lazy {
-        ViewModelProvider(this, viewModelFactory)[PhotoViewModel::class.java]
-    }
+    private lateinit var photoViewModel: PhotoViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +31,15 @@ class CollectionFragment : DaggerFragment() {
         enterTransition =
             androidx.transition.TransitionInflater.from(context)
                 .inflateTransition(android.R.transition.fade)
+        photoViewModel = provideViewModel()
     }
+
+    private fun provideViewModel() =
+        ViewModelProvider(this, viewModelFactory)[PhotoViewModel::class.java].apply {
+            collectionsPagedList.observe(viewLifecycleOwner, Observer {
+                mAdapter.submitList(it)
+            })
+        }
 
     private fun refreshList() {
         photoViewModel.collectionsPagedList.value?.dataSource?.invalidate()
@@ -43,11 +50,7 @@ class CollectionFragment : DaggerFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_collection, container, false)
-        photoViewModel.collectionsPagedList.observe(
-            viewLifecycleOwner,
-            Observer { mAdapter.submitList(it) })
-        return view
+        return inflater.inflate(R.layout.fragment_collection, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

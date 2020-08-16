@@ -24,5 +24,4 @@ abstract class FragmentContributorModule {
 
     @ContributesAndroidInjector
     internal abstract fun contributeStartPointFragment(): StartPointFragment
-
 }
